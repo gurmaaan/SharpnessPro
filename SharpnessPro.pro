@@ -26,15 +26,23 @@ CONFIG += c++11
 
 SOURCES += \
         main.cpp \
-        mainwindow.cpp
+        dialogs/mainwindow.cpp \
+    services/imgservice.cpp
 
 HEADERS += \
-        mainwindow.h
+        dialogs/mainwindow.h \
+        static.h \
+    services/imgservice.h
 
 FORMS += \
-        mainwindow.ui
+        dialogs/mainwindow.ui
+
+win32: RC_FILE = iconsource.rc
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+RESOURCES += \
+    sources.qrc
