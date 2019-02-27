@@ -144,7 +144,7 @@
    <property name="minimumSize">
     <size>
      <width>200</width>
-     <height>101</height>
+     <height>188</height>
     </size>
    </property>
    <property name="features">
@@ -160,7 +160,7 @@
     <number>1</number>
    </attribute>
    <widget class="QWidget" name="settingsDock_ctnt">
-    <layout class="QVBoxLayout" name="verticalLayout_2">
+    <layout class="QVBoxLayout" name="verticalLayout_3">
      <item>
       <widget class="QGroupBox" name="path_gb">
        <property name="title">
@@ -178,6 +178,43 @@
           <property name="icon">
            <iconset resource="../sources.qrc">
             <normaloff>:/icons/open_folder_ic.png</normaloff>:/icons/open_folder_ic.png</iconset>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="grad_gb">
+       <property name="title">
+        <string>Градиент</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <layout class="QHBoxLayout" name="sobel_H_lyt">
+          <item>
+           <widget class="QRadioButton" name="evklid_rb">
+            <property name="text">
+             <string>Евклид</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="manhattan_rb">
+            <property name="text">
+             <string>Манхетан</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QPushButton" name="calcSobel_btn">
+          <property name="text">
+           <string>Применить</string>
           </property>
          </widget>
         </item>

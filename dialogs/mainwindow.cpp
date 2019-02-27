@@ -28,16 +28,25 @@ void MainWindow::setupWidgets()
     setScaleRatio(1.0);
 }
 
+void MainWindow::showImg(QImage img)
+{
+    _scene->clear();
+    QGraphicsPixmapItem *pmItem = new QGraphicsPixmapItem(QPixmap::fromImage(img));
+    _scene->addItem(pmItem);
+}
+
 void MainWindow::on_actionOpenImg_triggered()
 {
     QString fileName = QFileDialog::getOpenFileName(nullptr, DIR_CAPTION, DIR_PATH);
     ui->path_le->setText(fileName);
 
     QImage baseImg(fileName);
-    setBaseImg(baseImg);
-    QGraphicsPixmapItem *pmItem = new QGraphicsPixmapItem(QPixmap::fromImage(baseImg));
-    _scene->addItem(pmItem);
-    ui->graphicsView->fitInView(_scene->sceneRect(),Qt::KeepAspectRatio);
+    if(!baseImg.isNull())
+    {
+        setBaseImg(baseImg);
+        showImg(baseImg);
+        ui->graphicsView->fitInView(_scene->sceneRect(),Qt::KeepAspectRatio);
+    }
 }
 
 void MainWindow::on_actionExit_triggered()
@@ -91,13 +100,23 @@ void MainWindow::setScaleRatio(double scaleRatio)
 
 void MainWindow::on_zoom_sb_valueChanged(double arg1)
 {
-    _scene->clear();
-    QImage bi = baseImg();
-    double newWd = static_cast<double>(bi.width()) * arg1;
-    double newHd = static_cast<double>(bi.height()) * arg1;
-    int newW = static_cast<int>(newWd);
-    int newH = static_cast<int>(newHd);
-    bi = bi.scaled(newW, newH);
-    QGraphicsPixmapItem *pmItem = new QGraphicsPixmapItem(QPixmap::fromImage(bi));
-    _scene->addItem(pmItem);
+    if(_scene->items().length() > 0)
+    {
+        QImage bi = baseImg();
+        double newWd = static_cast<double>(bi.width()) * arg1;
+        double newHd = static_cast<double>(bi.height()) * arg1;
+        int newW = static_cast<int>(newWd);
+        int newH = static_cast<int>(newHd);
+        bi = bi.scaled(newW, newH);
+        showImg(bi);
+    }
+    else
+    {
+        QMessageBox::critical(nullptr, "Ошибка", "Ни одного изображения не выбрано, зумирование невозможно. Выберите изображение и повторите попытку.");
+    }
+}
+
+void MainWindow::on_calcSobel_btn_clicked()
+{
+    showImg(_imgService.genImgWithblackBorder(baseImg()));
 }

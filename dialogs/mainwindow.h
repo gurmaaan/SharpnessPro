@@ -6,6 +6,7 @@
 #include <QFileDialog>
 #include <QGraphicsScene>
 #include <QGraphicsItem>
+#include <QMessageBox>
 //
 #include <static.h>
 #include <services/imgservice.h>
@@ -36,16 +37,18 @@ private slots:
     void on_zoom_sldr_sliderMoved(int position);
     void on_zoom_sb_valueChanged(double arg1);
 
+    void on_calcSobel_btn_clicked();
+
 private:
     Ui::MainWindow *ui;
     QGraphicsScene *_scene;
     double _scaleRatio;
-    //
     QImage _baseImg;
-
+    ImgService _imgService;
     //--func
     void connectAll();
     void setupWidgets();
+    void showImg(QImage img);
 };
 
 #endif // MAINWINDOW_H
