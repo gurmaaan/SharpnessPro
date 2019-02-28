@@ -31,7 +31,7 @@ QImage ImgService::genImgWithblackBorder(const QImage &baseImg)
     return newImg;
 }
 
-QImage ImgService::applySobelMask(QImage borderImg, Qt::Orientation orient)
+QImage ImgService::applySobelMask(const QImage &borderImg, Qt::Orientation orient)
 {
     int newW = borderImg.width() - 2;
     int newH = borderImg.height() - 2;
@@ -78,6 +78,44 @@ QImage ImgService::applySobelMask(QImage borderImg, Qt::Orientation orient)
     }
 
     return newImg;
+}
+
+QImage ImgService::evklid(const QImage &vertical, const QImage &horizontal)
+{
+    if(vertical.size() == horizontal.size())
+    {
+        QImage newImg(vertical.size(), vertical.format());
+        for(int j = 0; j < newImg.height(); j++)
+        {
+            for(int i = 0; i < newImg.width(); i++)
+            {
+                int v = qGray(vertical.pixel(i,j));
+                int h = qGray(horizontal.pixel(i,j));
+                int n = validComponent(static_cast<int>(qSqrt( qPow(v,2) + qPow(h,2) )));
+                newImg.setPixelColor(i,j,QColor(n,n,n));
+            }
+        }
+        return newImg;
+    }
+}
+
+QImage ImgService::manhattan(const QImage &vertical, const QImage &horizontal)
+{
+    if(vertical.size() == horizontal.size())
+    {
+        QImage newImg(vertical.size(), vertical.format());
+        for(int j = 0; j < newImg.height(); j++)
+        {
+            for(int i = 0; i < newImg.width(); i++)
+            {
+                int v = qGray(vertical.pixel(i,j));
+                int h = qGray(horizontal.pixel(i,j));
+                int n = validComponent(qAbs(v) + qAbs(h));
+                newImg.setPixelColor(i,j,QColor(n,n,n));
+            }
+        }
+        return newImg;
+    }
 }
 
 int ImgService::validComponent(int c)

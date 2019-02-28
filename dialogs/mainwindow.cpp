@@ -126,18 +126,20 @@ void MainWindow::on_calcSobel_btn_clicked()
 
 void MainWindow::on_manhattan_rb_clicked(bool checked)
 {
-    if(checked)
+    if(checked && (!baseImg().isNull()))
     {
         QImage verticalSobel = _imgService.applySobelMask(_imgService.genImgWithblackBorder(baseImg()), Qt::Vertical);
-        showImg(verticalSobel);
+        QImage horizontalSobel = _imgService.applySobelMask(_imgService.genImgWithblackBorder(baseImg()), Qt::Horizontal);
+        showImg(_imgService.manhattan(verticalSobel, horizontalSobel));
     }
 }
 
 void MainWindow::on_evklid_rb_clicked(bool checked)
 {
-    if(checked)
+    if(checked && (!baseImg().isNull()))
     {
+        QImage verticalSobel = _imgService.applySobelMask(_imgService.genImgWithblackBorder(baseImg()), Qt::Vertical);
         QImage horizontalSobel = _imgService.applySobelMask(_imgService.genImgWithblackBorder(baseImg()), Qt::Horizontal);
-        showImg(horizontalSobel);
+        showImg(_imgService.evklid(verticalSobel, horizontalSobel));
     }
 }

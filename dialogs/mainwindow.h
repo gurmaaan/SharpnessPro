@@ -40,6 +40,10 @@ private slots:
 
     void on_calcSobel_btn_clicked();
 
+    void on_manhattan_rb_clicked(bool checked);
+
+    void on_evklid_rb_clicked(bool checked);
+
 private:
     Ui::MainWindow *ui;
     QGraphicsScene *_scene;
