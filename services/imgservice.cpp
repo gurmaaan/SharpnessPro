@@ -30,3 +30,61 @@ QImage ImgService::genImgWithblackBorder(const QImage &baseImg)
 
     return newImg;
 }
+
+QImage ImgService::applySobelMask(QImage borderImg, Qt::Orientation orient)
+{
+    int newW = borderImg.width() - 2;
+    int newH = borderImg.height() - 2;
+    QImage newImg(QSize(newW, newH), borderImg.format());
+    QVector<QVector<int>> maskVector;
+    QVector<int> v1, v2, v3;
+
+    if(orient == Qt::Horizontal)
+    {
+        v1 << -1 << -2 << -1;
+        v2 <<  0 <<  0 <<  0;
+        v3 <<  1 <<  2 <<  1;
+    }
+    else if(orient == Qt::Vertical)
+    {
+        v1 << -1 << 0 << 1;
+        v2 << -2 << 0 << 2;
+        v3 << -1 << 0 << 1;
+    }
+    maskVector << v1 << v2 << v3;
+
+    Mask mask(maskVector);
+
+    for(int j = 1; j < borderImg.height() -1; j++)
+    {
+        for(int i = 1; i < borderImg.width() -1; i++)
+        {
+            int s1, s2, s3, s4, s5, s6, s7, s8, s9;
+            s1 = qGray(borderImg.pixel(i-1, j-1)) * mask.at(0,0);
+            s2 = qGray(borderImg.pixel(i  , j-1)) * mask.at(0,1);
+            s3 = qGray(borderImg.pixel(i+1, j-1)) * mask.at(0,2);
+            s4 = qGray(borderImg.pixel(i-1, j  )) * mask.at(1,0);
+            s5 = qGray(borderImg.pixel(i  , j  )) * mask.at(1,1);
+            s6 = qGray(borderImg.pixel(i+1, j  )) * mask.at(1,2);
+            s7 = qGray(borderImg.pixel(i-1, j+1)) * mask.at(2,0);
+            s8 = qGray(borderImg.pixel(i  , j+1)) * mask.at(2,1);
+            s9 = qGray(borderImg.pixel(i+1, j+1)) * mask.at(2,2);
+            int sum = s1+s2+s3+s4+s5+s6+s7+s8+s9;
+            if(sum < 0)
+                sum = sum * (-1);
+            sum = validComponent(sum);
+            newImg.setPixelColor(i-1,j-1, QColor(sum, sum, sum));
+        }
+    }
+
+    return newImg;
+}
+
+int ImgService::validComponent(int c)
+{
+    if(c > 255)
+        return 255;
+    else {
+        return c;
+    }
+}

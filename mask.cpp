@@ -48,7 +48,7 @@ void Mask::print()
         QVector<int> row = _mask.at(i);
         for(int j = 0; j < row.length(); j++)
         {
-            if(row.at(j) > 0)
+            if(row.at(j) >= 0)
                 rowStr = rowStr + QString(" ") + QString::number(row.at(j));
             else
                 rowStr = rowStr + QString::number(row.at(j));

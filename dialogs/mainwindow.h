@@ -7,6 +7,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsItem>
 #include <QMessageBox>
+#include <QDebug>
 //
 #include <static.h>
 #include <services/imgservice.h>

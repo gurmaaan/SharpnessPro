@@ -118,5 +118,26 @@ void MainWindow::on_zoom_sb_valueChanged(double arg1)
 
 void MainWindow::on_calcSobel_btn_clicked()
 {
-    showImg(_imgService.genImgWithblackBorder(baseImg()));
+    QImage imgWithBorder =_imgService.genImgWithblackBorder(baseImg());
+
+
+    QImage horizontalSobel = _imgService.applySobelMask(imgWithBorder, Qt::Horizontal);
+}
+
+void MainWindow::on_manhattan_rb_clicked(bool checked)
+{
+    if(checked)
+    {
+        QImage verticalSobel = _imgService.applySobelMask(_imgService.genImgWithblackBorder(baseImg()), Qt::Vertical);
+        showImg(verticalSobel);
+    }
+}
+
+void MainWindow::on_evklid_rb_clicked(bool checked)
+{
+    if(checked)
+    {
+        QImage horizontalSobel = _imgService.applySobelMask(_imgService.genImgWithblackBorder(baseImg()), Qt::Horizontal);
+        showImg(horizontalSobel);
+    }
 }
