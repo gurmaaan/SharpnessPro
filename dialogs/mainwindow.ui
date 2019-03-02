@@ -144,7 +144,7 @@
    <property name="minimumSize">
     <size>
      <width>200</width>
-     <height>249</height>
+     <height>278</height>
     </size>
    </property>
    <property name="features">
@@ -257,6 +257,13 @@
          </widget>
         </item>
        </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="test_btn">
+       <property name="text">
+        <string>Test</string>
+       </property>
       </widget>
      </item>
      <item>

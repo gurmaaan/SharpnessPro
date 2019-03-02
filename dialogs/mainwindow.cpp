@@ -182,3 +182,9 @@ void MainWindow::setSobelImg(const QImage &sobelImg)
 {
     _sobelImg = sobelImg;
 }
+
+void MainWindow::on_test_btn_clicked()
+{
+    QVector<Obj> objVector;
+    objVector << Obj(1) << Obj(2) << Obj(3);
+}

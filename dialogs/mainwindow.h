@@ -11,6 +11,7 @@
 //
 #include <static.h>
 #include <services/imgservice.h>
+#include <services/obj.h>
 
 namespace Ui {
 class MainWindow;
@@ -48,6 +49,8 @@ private slots:
     void on_evklid_rb_clicked(bool checked);
     void on_threshold_sb_valueChanged(int arg1);
 
+
+    void on_test_btn_clicked();
 
 private:
     Ui::MainWindow *ui;
