@@ -1,4 +1,4 @@
-#include "dialogs/mainwindow.h"
+ #include "dialogs/mainwindow.h"
 #include "ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -44,6 +44,7 @@ void MainWindow::on_actionOpenImg_triggered()
     if(!baseImg.isNull())
     {
         setBaseImg(baseImg);
+        setOriginalImg(baseImg);
         showImg(baseImg);
         ui->graphicsView->fitInView(_scene->sceneRect(),Qt::KeepAspectRatio);
     }
@@ -118,19 +119,29 @@ void MainWindow::on_zoom_sb_valueChanged(double arg1)
 
 void MainWindow::on_calcSobel_btn_clicked()
 {
-    QImage imgWithBorder =_imgService.genImgWithblackBorder(baseImg());
-
-
+    QImage imgWithBorder =_imgService.genImgWithblackBorder(originalImg());
     QImage horizontalSobel = _imgService.applySobelMask(imgWithBorder, Qt::Horizontal);
+    QImage verticalSobel = _imgService.applySobelMask(imgWithBorder, Qt::Vertical);
+    QImage res;
+    if(ui->manhattan_rb->isChecked())
+        res = _imgService.manhattan(verticalSobel, horizontalSobel);
+    else if (ui->evklid_rb->isChecked())
+        res = _imgService.evklid(verticalSobel, horizontalSobel);
+    setBaseImg(res);
+    setSobelImg(res);
+    showImg(res);
 }
 
 void MainWindow::on_manhattan_rb_clicked(bool checked)
 {
     if(checked && (!baseImg().isNull()))
     {
-        QImage verticalSobel = _imgService.applySobelMask(_imgService.genImgWithblackBorder(baseImg()), Qt::Vertical);
-        QImage horizontalSobel = _imgService.applySobelMask(_imgService.genImgWithblackBorder(baseImg()), Qt::Horizontal);
-        showImg(_imgService.manhattan(verticalSobel, horizontalSobel));
+        QImage verticalSobel = _imgService.applySobelMask(_imgService.genImgWithblackBorder(originalImg()), Qt::Vertical);
+        QImage horizontalSobel = _imgService.applySobelMask(_imgService.genImgWithblackBorder(originalImg()), Qt::Horizontal);
+        QImage manh = _imgService.manhattan(verticalSobel, horizontalSobel);
+        setBaseImg(manh);
+        showImg(manh);
+        setSobelImg(manh);
     }
 }
 
@@ -138,8 +149,36 @@ void MainWindow::on_evklid_rb_clicked(bool checked)
 {
     if(checked && (!baseImg().isNull()))
     {
-        QImage verticalSobel = _imgService.applySobelMask(_imgService.genImgWithblackBorder(baseImg()), Qt::Vertical);
-        QImage horizontalSobel = _imgService.applySobelMask(_imgService.genImgWithblackBorder(baseImg()), Qt::Horizontal);
-        showImg(_imgService.evklid(verticalSobel, horizontalSobel));
+        QImage verticalSobel = _imgService.applySobelMask(_imgService.genImgWithblackBorder(originalImg()), Qt::Vertical);
+        QImage horizontalSobel = _imgService.applySobelMask(_imgService.genImgWithblackBorder(originalImg()), Qt::Horizontal);
+        QImage evkLid = _imgService.evklid(verticalSobel, horizontalSobel);
+        setBaseImg(evkLid);
+        showImg(evkLid);
+        setSobelImg(evkLid);
     }
+}
+
+QImage MainWindow::originalImg() const
+{
+    return _originalImg;
+}
+
+void MainWindow::setOriginalImg(const QImage &originalImg)
+{
+    _originalImg = originalImg;
+}
+
+void MainWindow::on_threshold_sb_valueChanged(int arg1)
+{
+    showImg(_imgService.threshold(baseImg(), arg1));
+}
+
+QImage MainWindow::sobelImg() const
+{
+    return _sobelImg;
+}
+
+void MainWindow::setSobelImg(const QImage &sobelImg)
+{
+    _sobelImg = sobelImg;
 }

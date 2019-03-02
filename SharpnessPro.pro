@@ -27,14 +27,14 @@ CONFIG += c++11
 SOURCES += \
         main.cpp \
         dialogs/mainwindow.cpp \
-    services/imgservice.cpp \
-    mask.cpp
+        services/imgservice.cpp \
+        services/mask.cpp
 
 HEADERS += \
         dialogs/mainwindow.h \
         static.h \
-    services/imgservice.h \
-    mask.h
+        services/imgservice.h \
+        services/mask.h
 
 FORMS += \
         dialogs/mainwindow.ui

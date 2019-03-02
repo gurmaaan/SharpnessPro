@@ -82,9 +82,9 @@ QImage ImgService::applySobelMask(const QImage &borderImg, Qt::Orientation orien
 
 QImage ImgService::evklid(const QImage &vertical, const QImage &horizontal)
 {
+    QImage newImg(vertical.size(), vertical.format());
     if(vertical.size() == horizontal.size())
     {
-        QImage newImg(vertical.size(), vertical.format());
         for(int j = 0; j < newImg.height(); j++)
         {
             for(int i = 0; i < newImg.width(); i++)
@@ -95,15 +95,15 @@ QImage ImgService::evklid(const QImage &vertical, const QImage &horizontal)
                 newImg.setPixelColor(i,j,QColor(n,n,n));
             }
         }
-        return newImg;
     }
+    return newImg;
 }
 
 QImage ImgService::manhattan(const QImage &vertical, const QImage &horizontal)
 {
+    QImage newImg(vertical.size(), vertical.format());
     if(vertical.size() == horizontal.size())
     {
-        QImage newImg(vertical.size(), vertical.format());
         for(int j = 0; j < newImg.height(); j++)
         {
             for(int i = 0; i < newImg.width(); i++)
@@ -114,8 +114,24 @@ QImage ImgService::manhattan(const QImage &vertical, const QImage &horizontal)
                 newImg.setPixelColor(i,j,QColor(n,n,n));
             }
         }
-        return newImg;
     }
+    return newImg;
+}
+
+QImage ImgService::threshold(const QImage &sobelImg, int porog)
+{
+    QImage newImg(sobelImg.size(), sobelImg.format());
+    for (int i = 0; i < sobelImg.width(); i++)
+    {
+        for(int j = 0; j < sobelImg.height(); j++)
+        {
+            if(qGray(sobelImg.pixel(i, j)) >= porog)
+                newImg.setPixelColor(i,j, QColor(Qt::white));
+            else
+                newImg.setPixelColor(i,j,QColor(Qt::black));
+        }
+    }
+    return newImg;
 }
 
 int ImgService::validComponent(int c)

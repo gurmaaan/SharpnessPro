@@ -6,7 +6,7 @@
 #include <QDebug>
 #include <QtMath>
 //
-#include <mask.h>
+#include <services/mask.h>
 
 class ImgService
 {
@@ -17,6 +17,7 @@ public:
     QImage applySobelMask(const QImage &borderImg, Qt::Orientation orient);
     QImage evklid(const QImage &vertical, const QImage &horizontal);
     QImage manhattan(const QImage &vertical, const QImage &horizontal);
+    QImage threshold(const QImage &sobelImg, int porog);
     int validComponent(int c);
 };
 

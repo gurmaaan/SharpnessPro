@@ -144,7 +144,7 @@
    <property name="minimumSize">
     <size>
      <width>200</width>
-     <height>188</height>
+     <height>249</height>
     </size>
    </property>
    <property name="features">
@@ -215,6 +215,44 @@
          <widget class="QPushButton" name="calcSobel_btn">
           <property name="text">
            <string>Применить</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="threshold_gb">
+       <property name="title">
+        <string>Бинаризация</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QSlider" name="threshold_sldr">
+          <property name="maximum">
+           <number>255</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="threshold_sb">
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+          <property name="buttonSymbols">
+           <enum>QAbstractSpinBox::NoButtons</enum>
+          </property>
+          <property name="maximum">
+           <number>255</number>
           </property>
          </widget>
         </item>
@@ -348,6 +386,22 @@
     <hint type="destinationlabel">
      <x>-1</x>
      <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>threshold_sldr</sender>
+   <signal>sliderMoved(int)</signal>
+   <receiver>threshold_sb</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>61</x>
+     <y>236</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>131</x>
+     <y>236</y>
     </hint>
    </hints>
   </connection>
