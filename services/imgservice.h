@@ -22,7 +22,13 @@ public:
     int validComponent(int c);
     //labeling
     QVector<Obj> labeling(QImage thresh);
-    QVector<QVector<int> > convertToMatrix(QImage thresh);
+    unsigned char* convertToMatrix(QImage thresh);
+    QVector<QVector<int>> convertToVector(int *matrix, unsigned short W, unsigned short H);
+    void labelImg(unsigned short W, unsigned short H,
+                  unsigned char* input, int* output);
+    void labelComponent(unsigned short W, unsigned short H,
+                        unsigned char* input, int* output,
+                        int labelN, unsigned short x, unsigned short y);
 };
 
 #endif // IMGSERVICE_H

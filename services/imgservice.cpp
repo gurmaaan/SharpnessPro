@@ -144,32 +144,104 @@ int ImgService::validComponent(int c)
 }
 
 QVector<Obj> ImgService::labeling(QImage thresh)
-{
+{   
+    unsigned short W = static_cast<unsigned short>(thresh.width());
+    unsigned short H = static_cast<unsigned short>(thresh.height());
+
+    unsigned char* matrix = static_cast<unsigned char *>(malloc(W*H*sizeof(unsigned char)));
+    int* output = static_cast<int*>(malloc(W*H*sizeof(int)));
+    memset(output, 0, W*H*sizeof(int));
+    matrix = convertToMatrix(thresh);
+    labelImg(W,H, matrix, output);
+    QVector<QVector<int>> labeledVector = convertToVector(output, W, H);
+
+    QList<int> uniqLabelsNumbers;
+    for(int y = 0; y < H; y++)
+    {
+        QVector<int> row = labeledVector.at(y);
+        for(int x = 0; x < W; x++)
+        {
+            uniqLabelsNumbers << row.at(x);
+        }
+    }
+    uniqLabelsNumbers = uniqLabelsNumbers.toSet().toList();
+    std::sort(uniqLabelsNumbers.begin(), uniqLabelsNumbers.end());
+    qDebug() << uniqLabelsNumbers;
+
     QVector<Obj> objVector;
-    //objVector << Obj(1) << Obj(2)  << Obj(3);
-    QVector<QVector<int>> threshMatrix = convertToMatrix(thresh);
     return objVector;
 }
 
-QVector<QVector<int>> ImgService::convertToMatrix(QImage thresh)
+unsigned char* ImgService::convertToMatrix(QImage thresh)
 {
-    QVector<QVector<int>> imgVector;
-    imgVector.clear();
-    for(int i = 0; i < thresh.height(); i++)
+    unsigned short W = static_cast<unsigned short>(thresh.width());
+    unsigned short H = static_cast<unsigned short>(thresh.height());
+    unsigned char* matrix = static_cast<unsigned char *>( malloc(W*H*sizeof(unsigned char)));
+    int index = -1;
+    for(unsigned short y = 0; y < H; y++)
     {
-        QVector<int> row;
-        for(int j = 0; j < thresh.width(); j++)
+        for(unsigned short x = 0; x < W; x++)
         {
-            QColor pixClr = thresh.pixelColor(j,i);
-            if(pixClr == QColor(Qt::white))
-                row.append(1);
-            else if (pixClr == QColor(Qt::black))
-                row.append(0);
-            else
-                qDebug() << "Invalid color at (" <<j <<"," << i << ") : " << thresh.pixelColor(j,i);
+            index++;
+            matrix[index] = (thresh.pixelColor(x,y) == QColor(Qt::white)) ? 1 : 0;
         }
-        imgVector << row;
-        row.clear();
     }
-    return imgVector;
+    return matrix;
+}
+
+QVector<QVector<int> > ImgService::convertToVector(int *matrix, unsigned short W, unsigned short H)
+{
+   QVector<QVector<int>> output;
+   for(unsigned short y = 0; y < H; y++)
+   {
+       QVector<int> row;
+       for(unsigned short x = 0; x < W; x++)
+       {
+           int index = x + W*y;
+           row << matrix[index];
+       }
+       output << row;
+   }
+   return output;
+}
+
+void ImgService::labelImg(unsigned short W, unsigned short H, unsigned char *input, int *output)
+{
+    int labelN = 0;
+    int index = -1;
+    for (unsigned short y = 0; y < H; y++)
+    {
+        for (unsigned short x = 0; x < W; x++)
+        {
+            index++;
+
+            if (input[index] == 0)
+                continue;
+            if (output[index] != 0)
+                continue;
+
+            labelN++;
+            labelComponent(W, H, input, output, labelN, x, y);
+        }
+    }
+}
+
+void ImgService::labelComponent(unsigned short W, unsigned short H, unsigned char *input, int *output, int labelN, unsigned short x, unsigned short y)
+{
+    int index = x + W*y;
+    if (input[index] == 0)
+        return;
+    if (output[index] != 0)
+        return;
+
+    output[index] = labelN;
+
+    if (x > 0)
+        labelComponent(W, H, input, output, labelN, x-1, y);
+    if (x < W-1)
+        labelComponent(W, H, input, output, labelN, x+1, y);
+    if (y > 0)
+        labelComponent(W, H, input, output, labelN, x, y-1);
+    if (y < H-1)
+        labelComponent(W, H, input, output, labelN, x, y+1);
 }
