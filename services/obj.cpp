@@ -8,7 +8,6 @@ Obj::Obj()
 Obj::Obj(int id) :
     _id(id)
 {
-    qDebug() << _id;
 }
 
 Obj::Obj(const Obj &o) :
@@ -39,7 +38,7 @@ void Obj::setPoints(const QVector<QPoint> &points)
 
 void Obj::appendPoint(QPoint p)
 {
-    _points.append(p);
+    _points << p;
 }
 
 int Obj::s() const
@@ -55,4 +54,14 @@ void Obj::setS(int s)
 void Obj::calcS()
 {
     setS(_points.length());
+}
+
+void Obj::print()
+{
+    qDebug() << "id: " << _id;
+    qDebug() << "Точки: ";
+    for(auto p : _points)
+        qDebug() << p;
+    qDebug() << "Площадь: " << _s;
+    qDebug() << "----------------";
 }

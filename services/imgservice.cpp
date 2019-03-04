@@ -5,32 +5,6 @@ ImgService::ImgService()
 
 }
 
-QImage ImgService::genImgWithblackBorder(const QImage &baseImg)
-{
-    int newW = baseImg.width() + 2;
-    int newH = baseImg.height() + 2;
-
-    QImage  newImg(QSize(newW, newH), baseImg.format());
-
-    for(int j = 0; j < newImg.height(); j++)
-    {
-        for(int i = 0; i < newImg.width(); i++)
-        {
-            newImg.setPixelColor(i, j, QColor(Qt::black));
-        }
-    }
-
-    for(int j = 1; j < baseImg.height(); j++)
-    {
-        for(int i = 1; i < baseImg.width(); i++)
-        {
-            newImg.setPixel(i,j, baseImg.pixel(i-1, j-1));
-        }
-    }
-
-    return newImg;
-}
-
 QImage ImgService::applySobelMask(const QImage &borderImg, Qt::Orientation orient)
 {
     int newW = borderImg.width() - 2;
@@ -161,14 +135,37 @@ QVector<Obj> ImgService::labeling(QImage thresh)
         QVector<int> row = labeledVector.at(y);
         for(int x = 0; x < W; x++)
         {
-            uniqLabelsNumbers << row.at(x);
+            int l = row.at(x);
+            if(l > 0)
+                uniqLabelsNumbers << row.at(x);
         }
     }
     uniqLabelsNumbers = uniqLabelsNumbers.toSet().toList();
     std::sort(uniqLabelsNumbers.begin(), uniqLabelsNumbers.end());
-    qDebug() << uniqLabelsNumbers;
+    qDebug() << "Номера объектов: " << uniqLabelsNumbers;
 
     QVector<Obj> objVector;
+    for(int num : uniqLabelsNumbers)
+        objVector << Obj(num);
+
+    for(int y = 0; y < H; y++)
+    {
+        QVector<int> row = labeledVector.at(y);
+        for(int x = 0; x < W; x++)
+        {
+            int l = row.at(x);
+            if(l > 0)
+            {
+                objVector[l - 1].appendPoint(QPoint(x,y));
+            }
+        }
+    }
+
+    for(Obj ob : objVector)
+    {
+        ob.calcS();
+        ob.print();
+    }
     return objVector;
 }
 

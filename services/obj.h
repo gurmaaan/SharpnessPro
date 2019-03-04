@@ -17,6 +17,8 @@ public:
     QVector<QPoint> points() const;
     void setPoints(const QVector<QPoint> &points);
     void appendPoint(QPoint p);
+    void calcS();
+    void print();
 
     int s() const;
     void setS(int s);
@@ -26,7 +28,7 @@ private:
     QVector<QPoint> _points;
     int _s;
     //
-    void calcS();
+
 };
 
 #endif // OBJ_H

@@ -119,9 +119,8 @@ void MainWindow::on_zoom_sb_valueChanged(double arg1)
 
 void MainWindow::on_calcSobel_btn_clicked()
 {
-    QImage imgWithBorder =_imgService.genImgWithblackBorder(originalImg());
-    QImage horizontalSobel = _imgService.applySobelMask(imgWithBorder, Qt::Horizontal);
-    QImage verticalSobel = _imgService.applySobelMask(imgWithBorder, Qt::Vertical);
+    QImage horizontalSobel = _imgService.applySobelMask(originalImg(), Qt::Horizontal);
+    QImage verticalSobel = _imgService.applySobelMask(originalImg(), Qt::Vertical);
     QImage res;
     if(ui->manhattan_rb->isChecked())
         res = _imgService.manhattan(verticalSobel, horizontalSobel);
@@ -136,8 +135,8 @@ void MainWindow::on_manhattan_rb_clicked(bool checked)
 {
     if(checked && (!baseImg().isNull()))
     {
-        QImage verticalSobel = _imgService.applySobelMask(_imgService.genImgWithblackBorder(originalImg()), Qt::Vertical);
-        QImage horizontalSobel = _imgService.applySobelMask(_imgService.genImgWithblackBorder(originalImg()), Qt::Horizontal);
+        QImage verticalSobel = _imgService.applySobelMask(originalImg(), Qt::Vertical);
+        QImage horizontalSobel = _imgService.applySobelMask(originalImg(), Qt::Horizontal);
         QImage manh = _imgService.manhattan(verticalSobel, horizontalSobel);
         setBaseImg(manh);
         showImg(manh);
@@ -149,8 +148,8 @@ void MainWindow::on_evklid_rb_clicked(bool checked)
 {
     if(checked && (!baseImg().isNull()))
     {
-        QImage verticalSobel = _imgService.applySobelMask(_imgService.genImgWithblackBorder(originalImg()), Qt::Vertical);
-        QImage horizontalSobel = _imgService.applySobelMask(_imgService.genImgWithblackBorder(originalImg()), Qt::Horizontal);
+        QImage verticalSobel = _imgService.applySobelMask(originalImg(), Qt::Vertical);
+        QImage horizontalSobel = _imgService.applySobelMask(originalImg(), Qt::Horizontal);
         QImage evkLid = _imgService.evklid(verticalSobel, horizontalSobel);
         setBaseImg(evkLid);
         showImg(evkLid);
