@@ -260,13 +260,19 @@
       </widget>
      </item>
      <item>
-      <widget class="QGroupBox" name="groupBox">
+      <widget class="QGroupBox" name="s_gb">
        <property name="title">
         <string>Площадь</string>
        </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <item>
-         <widget class="QSpinBox" name="spinBox">
+         <widget class="QSpinBox" name="sMin_sb">
           <property name="alignment">
            <set>Qt::AlignCenter</set>
           </property>
@@ -282,14 +288,14 @@
          </widget>
         </item>
         <item>
-         <widget class="QSlider" name="horizontalSlider">
+         <widget class="QSlider" name="s_sldr">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QSpinBox" name="spinBox_2">
+         <widget class="QSpinBox" name="sMax_sb">
           <property name="alignment">
            <set>Qt::AlignCenter</set>
           </property>

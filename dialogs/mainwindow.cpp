@@ -170,6 +170,7 @@ void MainWindow::setOriginalImg(const QImage &originalImg)
 void MainWindow::on_threshold_sb_valueChanged(int arg1)
 {
     QImage thresh = _imgService.threshold(baseImg(), arg1);
+    //BUG::почему-то перестает онлайн обновляться трэшолд если устанавливать базовым изображением трешолдовое
     //setBaseImg(thresh);
     showImg(thresh);
     setThreshImg(thresh);
@@ -185,11 +186,6 @@ void MainWindow::setSobelImg(const QImage &sobelImg)
     _sobelImg = sobelImg;
 }
 
-void MainWindow::on_test_btn_clicked()
-{
-    _imgService.labeling(threshImg());
-}
-
 QImage MainWindow::threshImg() const
 {
     return _threshImg;
@@ -198,4 +194,42 @@ QImage MainWindow::threshImg() const
 void MainWindow::setThreshImg(const QImage &threshImg)
 {
     _threshImg = threshImg;
+}
+
+void MainWindow::on_s_sldr_sliderMoved(int position)
+{
+    for(auto obj : _objVector)
+    {
+        //qDebug() << obj.points().length();
+    }
+}
+
+QVector<Obj> MainWindow::objVector() const
+{
+    return _objVector;
+}
+
+void MainWindow::setObjVector(const QVector<Obj> &objVector)
+{
+    _objVector = objVector;
+}
+
+void MainWindow::on_s_gb_clicked(bool checked)
+{
+    if(checked)
+    {
+        QVector<Obj> ov = _imgService.labeling(threshImg());
+        QList<int> sList;
+        for(auto o : ov)
+        {
+            o.calcS();
+            sList << o.s();
+        }
+        int sMin = *std::min_element(sList.begin(), sList.end());
+        int sMax = *std::max_element(sList.begin(), sList.end());
+        ui->sMax_sb->setMaximum(sMax);
+        ui->sMax_sb->setValue(sMax);
+        ui->sMin_sb->setValue(sMin);
+        ui->s_sldr->setRange(sMin, sMax);
+    }
 }

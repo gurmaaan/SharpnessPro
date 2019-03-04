@@ -40,6 +40,9 @@ public:
     QImage threshImg() const;
     void setThreshImg(const QImage &threshImg);
 
+    QVector<Obj> objVector() const;
+    void setObjVector(const QVector<Obj> &objVector);
+
 private slots:
     void on_actionOpenImg_triggered();
     void on_actionExit_triggered();
@@ -51,19 +54,20 @@ private slots:
     void on_manhattan_rb_clicked(bool checked);
     void on_evklid_rb_clicked(bool checked);
     void on_threshold_sb_valueChanged(int arg1);
+    void on_s_sldr_sliderMoved(int position);
 
-
-    void on_test_btn_clicked();
+    void on_s_gb_clicked(bool checked);
 
 private:
     Ui::MainWindow *ui;
     QGraphicsScene *_scene;
     double _scaleRatio;
+    ImgService _imgService;
     QImage _baseImg;
     QImage _originalImg;
     QImage _sobelImg;
     QImage _threshImg;
-    ImgService _imgService;
+    QVector<Obj> _objVector;
     //--func
     void connectAll();
     void setupWidgets();

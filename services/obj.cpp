@@ -53,7 +53,7 @@ void Obj::setS(int s)
 
 void Obj::calcS()
 {
-    setS(_points.length());
+    _s = _points.length();
 }
 
 void Obj::print()
