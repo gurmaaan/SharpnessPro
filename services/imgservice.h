@@ -28,6 +28,7 @@ public:
     void labelComponent(unsigned short W, unsigned short H,
                         unsigned char* input, int* output,
                         int labelN, unsigned short x, unsigned short y);
+    QImage fillPixel(QImage thresh, Obj obj, QColor clr);
 };
 
 #endif // IMGSERVICE_H

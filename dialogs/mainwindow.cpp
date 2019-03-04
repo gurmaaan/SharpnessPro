@@ -198,10 +198,16 @@ void MainWindow::setThreshImg(const QImage &threshImg)
 
 void MainWindow::on_s_sldr_sliderMoved(int position)
 {
+    QImage timg = threshImg();
     for(auto obj : _objVector)
     {
-        //qDebug() << obj.points().length();
+        obj.calcS();
+        int s = obj.s();
+        qDebug() << s << position;
+        QColor clr = (s > position) ? QColor(Qt::white) : QColor(Qt::black);
+        timg = _imgService.fillPixel(timg, obj, clr);
     }
+    showImg(timg);
 }
 
 QVector<Obj> MainWindow::objVector() const
@@ -219,6 +225,7 @@ void MainWindow::on_s_gb_clicked(bool checked)
     if(checked)
     {
         QVector<Obj> ov = _imgService.labeling(threshImg());
+        setObjVector(ov);
         QList<int> sList;
         for(auto o : ov)
         {

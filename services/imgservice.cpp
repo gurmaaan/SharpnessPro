@@ -239,3 +239,13 @@ void ImgService::labelComponent(unsigned short W, unsigned short H, unsigned cha
     if (y < H-1)
         labelComponent(W, H, input, output, labelN, x, y+1);
 }
+
+QImage ImgService::fillPixel(QImage thresh, Obj obj, QColor clr)
+{
+    QImage timg = thresh;
+    for(QPoint p : obj.points())
+    {
+        timg.setPixelColor(p, clr);
+    }
+    return timg;
+}

@@ -55,7 +55,6 @@ private slots:
     void on_evklid_rb_clicked(bool checked);
     void on_threshold_sb_valueChanged(int arg1);
     void on_s_sldr_sliderMoved(int position);
-
     void on_s_gb_clicked(bool checked);
 
 private:
