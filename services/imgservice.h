@@ -7,6 +7,7 @@
 #include <QtMath>
 //
 #include <services/mask.h>
+#include <services/obj.h>
 
 class ImgService
 {
@@ -19,6 +20,9 @@ public:
     QImage manhattan(const QImage &vertical, const QImage &horizontal);
     QImage threshold(const QImage &sobelImg, int porog);
     int validComponent(int c);
+    //labeling
+    QVector<Obj> labeling(QImage thresh);
+    QVector<QVector<int> > convertToMatrix(QImage thresh);
 };
 
 #endif // IMGSERVICE_H

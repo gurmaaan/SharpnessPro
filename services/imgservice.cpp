@@ -142,3 +142,34 @@ int ImgService::validComponent(int c)
         return c;
     }
 }
+
+QVector<Obj> ImgService::labeling(QImage thresh)
+{
+    QVector<Obj> objVector;
+    //objVector << Obj(1) << Obj(2)  << Obj(3);
+    QVector<QVector<int>> threshMatrix = convertToMatrix(thresh);
+    return objVector;
+}
+
+QVector<QVector<int>> ImgService::convertToMatrix(QImage thresh)
+{
+    QVector<QVector<int>> imgVector;
+    imgVector.clear();
+    for(int i = 0; i < thresh.height(); i++)
+    {
+        QVector<int> row;
+        for(int j = 0; j < thresh.width(); j++)
+        {
+            QColor pixClr = thresh.pixelColor(j,i);
+            if(pixClr == QColor(Qt::white))
+                row.append(1);
+            else if (pixClr == QColor(Qt::black))
+                row.append(0);
+            else
+                qDebug() << "Invalid color at (" <<j <<"," << i << ") : " << thresh.pixelColor(j,i);
+        }
+        imgVector << row;
+        row.clear();
+    }
+    return imgVector;
+}

@@ -170,7 +170,10 @@ void MainWindow::setOriginalImg(const QImage &originalImg)
 
 void MainWindow::on_threshold_sb_valueChanged(int arg1)
 {
-    showImg(_imgService.threshold(baseImg(), arg1));
+    QImage thresh = _imgService.threshold(baseImg(), arg1);
+    //setBaseImg(thresh);
+    showImg(thresh);
+    setThreshImg(thresh);
 }
 
 QImage MainWindow::sobelImg() const
@@ -185,6 +188,15 @@ void MainWindow::setSobelImg(const QImage &sobelImg)
 
 void MainWindow::on_test_btn_clicked()
 {
-    QVector<Obj> objVector;
-    objVector << Obj(1) << Obj(2) << Obj(3);
+    _imgService.labeling(threshImg());
+}
+
+QImage MainWindow::threshImg() const
+{
+    return _threshImg;
+}
+
+void MainWindow::setThreshImg(const QImage &threshImg)
+{
+    _threshImg = threshImg;
 }

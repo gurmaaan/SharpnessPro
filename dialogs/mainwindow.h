@@ -37,6 +37,9 @@ public:
     QImage sobelImg() const;
     void setSobelImg(const QImage &sobelImg);
 
+    QImage threshImg() const;
+    void setThreshImg(const QImage &threshImg);
+
 private slots:
     void on_actionOpenImg_triggered();
     void on_actionExit_triggered();
@@ -59,6 +62,7 @@ private:
     QImage _baseImg;
     QImage _originalImg;
     QImage _sobelImg;
+    QImage _threshImg;
     ImgService _imgService;
     //--func
     void connectAll();
