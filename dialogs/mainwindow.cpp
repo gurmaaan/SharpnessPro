@@ -17,7 +17,10 @@ MainWindow::~MainWindow()
 
 void MainWindow::connectAll()
 {
-
+    connect(_imgProcessor, &ImgProcessor::imgUpdated,
+            this, &MainWindow::showImg);
+    connect(this, &MainWindow::imgUpdated,
+            this, &MainWindow::showImg);
 }
 
 void MainWindow::setupWidgets()
@@ -26,10 +29,12 @@ void MainWindow::setupWidgets()
     ui->graphicsView->setScene(_scene);
     ui->zoom_V_lyt->setAlignment(Qt::AlignHCenter);
     setScaleRatio(1.0);
+    _imgProcessor = new ImgProcessor();
 }
 
 void MainWindow::showImg(QImage img)
 {
+    //setBaseImg(img);
     _scene->clear();
     QGraphicsPixmapItem *pmItem = new QGraphicsPixmapItem(QPixmap::fromImage(img));
     _scene->addItem(pmItem);
@@ -131,32 +136,6 @@ void MainWindow::on_calcSobel_btn_clicked()
     showImg(res);
 }
 
-void MainWindow::on_manhattan_rb_clicked(bool checked)
-{
-    if(checked && (!baseImg().isNull()))
-    {
-        QImage verticalSobel = _imgService.applySobelMask(originalImg(), Qt::Vertical);
-        QImage horizontalSobel = _imgService.applySobelMask(originalImg(), Qt::Horizontal);
-        QImage manh = _imgService.manhattan(verticalSobel, horizontalSobel);
-        setBaseImg(manh);
-        showImg(manh);
-        setSobelImg(manh);
-    }
-}
-
-void MainWindow::on_evklid_rb_clicked(bool checked)
-{
-    if(checked && (!baseImg().isNull()))
-    {
-        QImage verticalSobel = _imgService.applySobelMask(originalImg(), Qt::Vertical);
-        QImage horizontalSobel = _imgService.applySobelMask(originalImg(), Qt::Horizontal);
-        QImage evkLid = _imgService.evklid(verticalSobel, horizontalSobel);
-        setBaseImg(evkLid);
-        showImg(evkLid);
-        setSobelImg(evkLid);
-    }
-}
-
 QImage MainWindow::originalImg() const
 {
     return _originalImg;
@@ -171,7 +150,6 @@ void MainWindow::on_threshold_sb_valueChanged(int arg1)
 {
     QImage thresh = _imgService.threshold(baseImg(), arg1);
     //BUG::почему-то перестает онлайн обновляться трэшолд если устанавливать базовым изображением трешолдовое
-    //setBaseImg(thresh);
     showImg(thresh);
     setThreshImg(thresh);
 }
@@ -196,20 +174,6 @@ void MainWindow::setThreshImg(const QImage &threshImg)
     _threshImg = threshImg;
 }
 
-void MainWindow::on_s_sldr_sliderMoved(int position)
-{
-    QImage timg = threshImg();
-    for(auto obj : _objVector)
-    {
-        obj.calcS();
-        int s = obj.s();
-        qDebug() << s << position;
-        QColor clr = (s > position) ? QColor(Qt::white) : QColor(Qt::black);
-        timg = _imgService.fillPixel(timg, obj, clr);
-    }
-    showImg(timg);
-}
-
 QVector<Obj> MainWindow::objVector() const
 {
     return _objVector;
@@ -218,6 +182,20 @@ QVector<Obj> MainWindow::objVector() const
 void MainWindow::setObjVector(const QVector<Obj> &objVector)
 {
     _objVector = objVector;
+}
+
+void MainWindow::on_s_sldr_sliderMoved(int position)
+{
+    QImage timg = threshImg();
+    for(auto obj : _objVector)
+    {
+        obj.calcS();
+        int s = obj.s();
+        QColor clr = (s > position) ? QColor(Qt::white) : QColor(Qt::black);
+        timg = _imgService.fillPixel(timg, obj, clr);
+        setThreshImg(timg);
+    }
+    showImg(timg);
 }
 
 void MainWindow::on_s_gb_clicked(bool checked)
@@ -239,4 +217,10 @@ void MainWindow::on_s_gb_clicked(bool checked)
         ui->sMin_sb->setValue(sMin);
         ui->s_sldr->setRange(sMin, sMax);
     }
+}
+
+void MainWindow::on_pushButton_clicked()
+{
+    QVector<QPoint> cnt = _imgService.findContour(_threshImg);
+    showImg(_threshImg);
 }

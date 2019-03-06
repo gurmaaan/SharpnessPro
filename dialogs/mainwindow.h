@@ -12,6 +12,7 @@
 #include <static.h>
 #include <services/imgservice.h>
 #include <services/obj.h>
+#include <services/imgprocessor.h>
 
 namespace Ui {
 class MainWindow;
@@ -43,6 +44,11 @@ public:
     QVector<Obj> objVector() const;
     void setObjVector(const QVector<Obj> &objVector);
 
+signals:
+    void imgUpdated(QImage img);
+
+public slots:
+    void showImg(QImage img);
 private slots:
     void on_actionOpenImg_triggered();
     void on_actionExit_triggered();
@@ -51,17 +57,18 @@ private slots:
     void on_zoom_sldr_sliderMoved(int position);
     void on_zoom_sb_valueChanged(double arg1);
     void on_calcSobel_btn_clicked();
-    void on_manhattan_rb_clicked(bool checked);
-    void on_evklid_rb_clicked(bool checked);
     void on_threshold_sb_valueChanged(int arg1);
     void on_s_sldr_sliderMoved(int position);
     void on_s_gb_clicked(bool checked);
+
+    void on_pushButton_clicked();
 
 private:
     Ui::MainWindow *ui;
     QGraphicsScene *_scene;
     double _scaleRatio;
     ImgService _imgService;
+    ImgProcessor *_imgProcessor;
     QImage _baseImg;
     QImage _originalImg;
     QImage _sobelImg;
@@ -70,7 +77,6 @@ private:
     //--func
     void connectAll();
     void setupWidgets();
-    void showImg(QImage img);
 };
 
 #endif // MAINWINDOW_H

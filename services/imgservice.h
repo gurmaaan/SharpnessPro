@@ -6,6 +6,8 @@
 #include <QDebug>
 #include <QtMath>
 //
+#include <opencv2/imgproc/imgproc.hpp>
+//
 #include <services/mask.h>
 #include <services/obj.h>
 
@@ -14,6 +16,7 @@ class ImgService
 public:
     ImgService();
     //
+    QImage gausianBlur(QImage img, int coreSize);
     QImage applySobelMask(const QImage &borderImg, Qt::Orientation orient);
     QImage evklid(const QImage &vertical, const QImage &horizontal);
     QImage manhattan(const QImage &vertical, const QImage &horizontal);
@@ -29,6 +32,8 @@ public:
                         unsigned char* input, int* output,
                         int labelN, unsigned short x, unsigned short y);
     QImage fillPixel(QImage thresh, Obj obj, QColor clr);
+
+    QVector<QPoint> findContour(QImage &thresh);
 };
 
 #endif // IMGSERVICE_H

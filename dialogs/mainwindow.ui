@@ -144,7 +144,7 @@
    <property name="minimumSize">
     <size>
      <width>200</width>
-     <height>310</height>
+     <height>373</height>
     </size>
    </property>
    <property name="features">
@@ -314,6 +314,13 @@
       </widget>
      </item>
      <item>
+      <widget class="QPushButton" name="pushButton">
+       <property name="text">
+        <string>PushButton</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer name="verticalSpacer">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
@@ -418,8 +425,8 @@
    <slot>trigger()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1443</x>
-     <y>42</y>
+     <x>1454</x>
+     <y>90</y>
     </hint>
     <hint type="destinationlabel">
      <x>-1</x>
@@ -450,12 +457,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>61</x>
-     <y>236</y>
+     <x>71</x>
+     <y>307</y>
     </hint>
     <hint type="destinationlabel">
-     <x>131</x>
-     <y>236</y>
+     <x>180</x>
+     <y>306</y>
     </hint>
    </hints>
   </connection>

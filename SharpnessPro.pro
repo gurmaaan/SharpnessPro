@@ -29,17 +29,28 @@ SOURCES += \
         dialogs/mainwindow.cpp \
         services/imgservice.cpp \
         services/mask.cpp \
-    services/obj.cpp
+    services/obj.cpp \
+    services/imgprocessor.cpp
 
 HEADERS += \
         dialogs/mainwindow.h \
         static.h \
         services/imgservice.h \
         services/mask.h \
-    services/obj.h
+    services/obj.h \
+    services/imgprocessor.h
 
 FORMS += \
         dialogs/mainwindow.ui
+
+INCLUDEPATH += C:\opencv\build\include
+
+LIBS += C:\opencv-build\bin\libopencv_core400.dll
+LIBS += C:\opencv-build\bin\libopencv_highgui400.dll
+LIBS += C:\opencv-build\bin\libopencv_imgcodecs400.dll
+LIBS += C:\opencv-build\bin\libopencv_imgproc400.dll
+LIBS += C:\opencv-build\bin\libopencv_features2d400.dll
+LIBS += C:\opencv-build\bin\libopencv_calib3d400.dll
 
 win32: RC_FILE = iconsource.rc
 

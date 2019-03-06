@@ -5,6 +5,21 @@ ImgService::ImgService()
 
 }
 
+QImage ImgService::gausianBlur(QImage img, int coreSize)
+{
+    QImage out;
+    if(img.format() == QImage::Format_RGB32)
+    {
+        QImage conv = img.convertToFormat(QImage::Format_ARGB32);
+        cv::Mat srcImg(conv.height(), conv.width(), CV_8UC4, (void *)conv.constBits(), conv.bytesPerLine());
+        if( !srcImg.data )
+            return out;
+        cv::GaussianBlur(srcImg, srcImg, cv::Size(coreSize,coreSize), 0, 0, cv::BORDER_DEFAULT );
+        out = QImage((uchar* ) srcImg.data, srcImg.cols, srcImg.rows, srcImg.step[0], QImage::Format_ARGB32);
+    }
+    return out;
+}
+
 QImage ImgService::applySobelMask(const QImage &borderImg, Qt::Orientation orient)
 {
     int newW = borderImg.width() - 2;
@@ -248,4 +263,32 @@ QImage ImgService::fillPixel(QImage thresh, Obj obj, QColor clr)
         timg.setPixelColor(p, clr);
     }
     return timg;
+}
+
+QVector<QPoint> ImgService::findContour(QImage &thresh)
+{
+    QVector<QPoint> contour;
+    for(int y = 1; y < thresh.height() - 1; y++)
+    {
+        for(int x = 1; x < thresh.width() - 1; x++)
+        {
+            bool p  = (thresh.pixelColor(x  ,y  ) == QColor(Qt::white));
+
+            bool p1 = (thresh.pixelColor(x-1,y-1) == QColor(Qt::black));
+            bool p2 = (thresh.pixelColor(x  ,y-1) == QColor(Qt::black));
+            bool p3 = (thresh.pixelColor(x+1,y-1) == QColor(Qt::black));
+            bool p4 = (thresh.pixelColor(x-1,y  ) == QColor(Qt::black));
+            bool p6 = (thresh.pixelColor(x+1,y  ) == QColor(Qt::black));
+            bool p7 = (thresh.pixelColor(x-1,y+1) == QColor(Qt::black));
+            bool p8 = (thresh.pixelColor(x  ,y+1) == QColor(Qt::black));
+            bool p9 = (thresh.pixelColor(x+1,y+1) == QColor(Qt::black));
+
+            if( p && (p1 || p2 || p3 || p4 || p6 || p7 || p8 || p9) )
+            {
+                contour << QPoint(x,y);
+                thresh.setPixelColor(x,y,QColor(Qt::red));
+            }
+        }
+    }
+    return contour;
 }
