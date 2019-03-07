@@ -5,21 +5,6 @@ ImgService::ImgService()
 
 }
 
-QImage ImgService::gausianBlur(QImage img, int coreSize)
-{
-    QImage out;
-    if(img.format() == QImage::Format_RGB32)
-    {
-        QImage conv = img.convertToFormat(QImage::Format_ARGB32);
-        cv::Mat srcImg(conv.height(), conv.width(), CV_8UC4, (void *)conv.constBits(), conv.bytesPerLine());
-        if( !srcImg.data )
-            return out;
-        cv::GaussianBlur(srcImg, srcImg, cv::Size(coreSize,coreSize), 0, 0, cv::BORDER_DEFAULT );
-        out = QImage((uchar* ) srcImg.data, srcImg.cols, srcImg.rows, srcImg.step[0], QImage::Format_ARGB32);
-    }
-    return out;
-}
-
 QImage ImgService::applySobelMask(const QImage &borderImg, Qt::Orientation orient)
 {
     int newW = borderImg.width() - 2;

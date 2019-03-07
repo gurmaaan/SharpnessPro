@@ -63,6 +63,18 @@ private slots:
 
     void on_pushButton_clicked();
 
+    void on_ero_sldr_sliderMoved(int position);
+
+    void on_dilat_sldr_sliderMoved(int position);
+
+    void on_applyMorph_btn_clicked();
+
+    void on_ero_sb_valueChanged(int arg1);
+
+    void on_actionSaveImg_triggered();
+
+    void on_dilat_sb_valueChanged(int arg1);
+
 private:
     Ui::MainWindow *ui;
     QGraphicsScene *_scene;

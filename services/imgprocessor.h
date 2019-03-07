@@ -14,6 +14,8 @@ public:
     explicit ImgProcessor(QObject *parent = nullptr);
     QImage gaussianBlur(QImage img, int kernelSize);
     QImage sobel(QImage img);
+    QImage erosion(QImage thresh, int kernelSize, int kernelType);
+    QImage dilation(QImage thresh,int kernelSize, int kernelType);
 
 signals:
     void imgUpdated(QImage img);

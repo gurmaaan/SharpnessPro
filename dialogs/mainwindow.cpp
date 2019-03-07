@@ -224,3 +224,76 @@ void MainWindow::on_pushButton_clicked()
     QVector<QPoint> cnt = _imgService.findContour(_threshImg);
     showImg(_threshImg);
 }
+
+void MainWindow::on_ero_sldr_sliderMoved(int position)
+{
+    if(position % 2 ==1)
+    {
+        ui->ero_sb->setValue(position);
+    }
+}
+
+void MainWindow::on_dilat_sldr_sliderMoved(int position)
+{
+    if(position % 2 ==1)
+    {
+        ui->dilat_sb->setValue(position);
+    }
+}
+
+void MainWindow::on_applyMorph_btn_clicked()
+{
+    int type = 0;
+    if(ui->morphKernel_rect->isChecked())
+        type = 0;
+    else if(ui->morphKernel_cross->isChecked())
+        type = 1;
+    else if(ui->morphKernel_ellipse->isChecked())
+        type = 2;
+
+//    QImage morph;
+//    if(ui->dilat_cb->isChecked())
+//    {
+//        morph = _imgProcessor->dilation(_threshImg, ui->dilat_sb->value(), type);
+//    }
+
+//    if(ui->ero_cb->isChecked())
+//    {
+        //setThreshImg(_imgProcessor->erosion( _imgProcessor->dilation(_threshImg, ui->dilat_sb->value(), type), ui->dilat_sb->value(), type));
+    //}
+
+    QImage morph = _imgProcessor->dilation(_threshImg, ui->dilat_sb->value(), type);
+    _imgProcessor->erosion(morph, ui->ero_sb->value(), type);
+
+}
+
+void MainWindow::on_ero_sb_valueChanged(int arg1)
+{
+    int type = 0;
+    if(ui->morphKernel_rect->isChecked())
+        type = 0;
+    else if(ui->morphKernel_cross->isChecked())
+        type = 1;
+    else if(ui->morphKernel_ellipse->isChecked())
+        type = 2;
+    _imgProcessor->erosion(_threshImg, arg1, type);
+}
+
+void MainWindow::on_actionSaveImg_triggered()
+{
+    QPixmap sceneViewPm = ui->graphicsView->grab();
+    QString fileName = QFileDialog::getSaveFileName(nullptr, "Сохранить картинку", DIR_PATH);
+    sceneViewPm.save(fileName);
+}
+
+void MainWindow::on_dilat_sb_valueChanged(int arg1)
+{
+    int type = 0;
+    if(ui->morphKernel_rect->isChecked())
+        type = 0;
+    else if(ui->morphKernel_cross->isChecked())
+        type = 1;
+    else if(ui->morphKernel_ellipse->isChecked())
+        type = 2;
+    _imgProcessor->dilation(_threshImg, arg1, type);
+}

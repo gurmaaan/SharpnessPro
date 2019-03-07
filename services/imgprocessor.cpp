@@ -48,3 +48,37 @@ QImage ImgProcessor::sobel(QImage img)
     }
     return out;
 }
+
+QImage ImgProcessor::erosion(QImage thresh, int kernelSize, int kernelType)
+{
+    QImage out;
+    if(thresh.format() == QImage::Format_RGB32)
+    {
+        QImage conv = thresh.convertToFormat(QImage::Format_ARGB32);
+        Mat srcImg(conv.height(), conv.width(), CV_8UC4, (void *)conv.constBits(), conv.bytesPerLine());
+
+        Mat element = getStructuringElement(kernelType, Size( 2*kernelSize + 1, 2*kernelSize+1 ), Point( kernelSize, kernelSize ) );
+        Mat outImg;
+        erode( srcImg, outImg, element );
+        out = QImage(static_cast<uchar*>(outImg.data), outImg.cols, outImg.rows, outImg.step[0], QImage::Format_ARGB32);
+        emit imgUpdated(out);
+    }
+    return out;
+}
+
+QImage ImgProcessor::dilation(QImage thresh, int kernelSize, int kernelType)
+{
+    QImage out;
+    if(thresh.format() == QImage::Format_RGB32)
+    {
+        QImage conv = thresh.convertToFormat(QImage::Format_ARGB32);
+        Mat srcImg(conv.height(), conv.width(), CV_8UC4, (void *)conv.constBits(), conv.bytesPerLine());
+
+        Mat element = getStructuringElement(kernelType, Size( 2*kernelSize + 1, 2*kernelSize+1 ), Point( kernelSize, kernelSize ) );
+        Mat outImg;
+        dilate(srcImg, outImg, element);
+        out = QImage(static_cast<uchar*>(outImg.data), outImg.cols, outImg.rows, outImg.step[0], QImage::Format_ARGB32);
+        emit imgUpdated(out);
+    }
+    return out;
+}
