@@ -23,6 +23,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 CONFIG += c++11
+QMAKE_CXXFLAGS += "-Wno-old-style-cast"
 
 SOURCES += \
         main.cpp \
@@ -45,12 +46,12 @@ FORMS += \
 
 INCLUDEPATH += C:\opencv\build\include
 
-LIBS += C:\opencv-build\bin\libopencv_core400.dll
-LIBS += C:\opencv-build\bin\libopencv_highgui400.dll
-LIBS += C:\opencv-build\bin\libopencv_imgcodecs400.dll
-LIBS += C:\opencv-build\bin\libopencv_imgproc400.dll
-LIBS += C:\opencv-build\bin\libopencv_features2d400.dll
-LIBS += C:\opencv-build\bin\libopencv_calib3d400.dll
+LIBS += C:\opencv-build\bin\libopencv_core410.dll
+LIBS += C:\opencv-build\bin\libopencv_highgui410.dll
+LIBS += C:\opencv-build\bin\libopencv_imgcodecs410.dll
+LIBS += C:\opencv-build\bin\libopencv_imgproc410.dll
+LIBS += C:\opencv-build\bin\libopencv_features2d410.dll
+LIBS += C:\opencv-build\bin\libopencv_calib3d410.dll
 
 win32: RC_FILE = iconsource.rc
 

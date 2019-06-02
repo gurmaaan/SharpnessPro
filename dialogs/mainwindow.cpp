@@ -243,27 +243,22 @@ void MainWindow::on_dilat_sldr_sliderMoved(int position)
 
 void MainWindow::on_applyMorph_btn_clicked()
 {
-    int type = 0;
-    if(ui->morphKernel_rect->isChecked())
-        type = 0;
-    else if(ui->morphKernel_cross->isChecked())
-        type = 1;
-    else if(ui->morphKernel_ellipse->isChecked())
-        type = 2;
+//    int type = 0;
+//    if(ui->morphKernel_rect->isChecked())
+//        type = 0;
+//    else if(ui->morphKernel_cross->isChecked())
+//        type = 1;
+//    else if(ui->morphKernel_ellipse->isChecked())
+//        type = 2;
 
-//    QImage morph;
-//    if(ui->dilat_cb->isChecked())
-//    {
-//        morph = _imgProcessor->dilation(_threshImg, ui->dilat_sb->value(), type);
-//    }
-
-//    if(ui->ero_cb->isChecked())
-//    {
-        //setThreshImg(_imgProcessor->erosion( _imgProcessor->dilation(_threshImg, ui->dilat_sb->value(), type), ui->dilat_sb->value(), type));
-    //}
-
-    QImage morph = _imgProcessor->dilation(_threshImg, ui->dilat_sb->value(), type);
-    _imgProcessor->erosion(morph, ui->ero_sb->value(), type);
+    QImage morph = _imgProcessor->dilation(_threshImg, 9, 2);
+    showImg(originalImg());
+    QRect outerRect = _imgService.findSceletRect(morph);
+    qreal tlx = static_cast<qreal>(outerRect.topLeft().x());
+    qreal tly = static_cast<qreal>(outerRect.topLeft().y());
+    qreal w = static_cast<qreal>(outerRect.width());
+    qreal h = static_cast<qreal>(outerRect.height());
+    _scene->addEllipse(tlx, tly, w, h, QPen(QColor(Qt::red)));
 
 }
 

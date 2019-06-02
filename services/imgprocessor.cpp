@@ -13,7 +13,7 @@ QImage ImgProcessor::gaussianBlur(QImage img, int kernelSize)
     if(img.format() == QImage::Format_RGB32)
     {
         QImage conv = img.convertToFormat(QImage::Format_ARGB32);
-        Mat srcImg(conv.height(), conv.width(), CV_8UC4, (void *)conv.constBits(), conv.bytesPerLine());
+        Mat srcImg(conv.height(), conv.width(), CV_8UC4, (void *)conv.constBits(),  conv.bytesPerLine());
         GaussianBlur(srcImg, srcImg, cv::Size(kernelSize,kernelSize), 0, 0, BORDER_DEFAULT );
         out = QImage(static_cast<uchar*>(srcImg.data), srcImg.cols, srcImg.rows, srcImg.step[0], QImage::Format_ARGB32);
         emit imgUpdated(out);
@@ -61,7 +61,7 @@ QImage ImgProcessor::erosion(QImage thresh, int kernelSize, int kernelType)
         Mat outImg;
         erode( srcImg, outImg, element );
         out = QImage(static_cast<uchar*>(outImg.data), outImg.cols, outImg.rows, outImg.step[0], QImage::Format_ARGB32);
-        emit imgUpdated(out);
+        //emit imgUpdated(out);
     }
     return out;
 }
@@ -78,7 +78,7 @@ QImage ImgProcessor::dilation(QImage thresh, int kernelSize, int kernelType)
         Mat outImg;
         dilate(srcImg, outImg, element);
         out = QImage(static_cast<uchar*>(outImg.data), outImg.cols, outImg.rows, outImg.step[0], QImage::Format_ARGB32);
-        emit imgUpdated(out);
+        //emit imgUpdated(out);
     }
     return out;
 }

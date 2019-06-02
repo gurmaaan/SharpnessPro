@@ -1,10 +1,11 @@
-#ifndef IMGSERVICE_H
+﻿#ifndef IMGSERVICE_H
 #define IMGSERVICE_H
 
 #include <QObject>
 #include <QImage>
 #include <QDebug>
 #include <QtMath>
+
 //
 #include <services/mask.h>
 #include <services/obj.h>
@@ -31,6 +32,7 @@ public:
     QImage fillPixel(QImage thresh, Obj obj, QColor clr);
 
     QVector<QPoint> findContour(QImage &thresh);
+    QRect findSceletRect(QImage img);
 };
 
 #endif // IMGSERVICE_H

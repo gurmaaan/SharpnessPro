@@ -277,3 +277,55 @@ QVector<QPoint> ImgService::findContour(QImage &thresh)
     }
     return contour;
 }
+
+QRect ImgService::findSceletRect(QImage img)
+{
+    QVector<int> xVector, yVector;
+    for(int j = 0; j < img.height(); j++)
+    {
+        for(int i = 0; i < img.width(); i++)
+        {
+            if(img.pixelColor(i,j) == QColor(Qt::white))
+            {
+                xVector << i;
+                yVector << j;
+            }
+        }
+    }
+
+    int xMin, xMax, yMin, yMax;
+    xMin = *std::min_element(xVector.begin(), xVector.end());
+    xMax = *std::max_element(xVector.begin(), xVector.end());
+    yMin = *std::min_element(yVector.begin(), yVector.end());
+    yMax = *std::max_element(yVector.begin(), yVector.end());
+
+    int yCenter, xCenter;
+    yCenter = (yMax - yMin) / 2;
+    xCenter = (xMax - xMin) / 2;
+
+    qDebug() << xMin << xMax << yMin << yMax << xCenter << yCenter;
+    QColor circleClr = QColor(Qt::white);
+    int widthLeft = 0, widthRight = 0;
+
+    while (circleClr == QColor(Qt::white))
+    {
+        widthLeft +=1;
+        circleClr = img.pixelColor(xMin + widthLeft, yCenter);
+    }
+    qDebug() << "Left: " << widthLeft;
+
+    circleClr = QColor(Qt::white);
+
+    while (circleClr == QColor(Qt::white))
+    {
+        widthRight +=1;
+        circleClr = img.pixelColor(xMax - widthRight, yCenter);
+    }
+
+    qDebug() << "Right: " <<  widthRight;
+
+    int w = (widthLeft + widthRight) / 4;
+
+    QRect offset(QPoint(xMin+w, yMin+w), QPoint(xMax-w, yMax-w));
+    return offset;
+}
