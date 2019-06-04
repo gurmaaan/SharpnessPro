@@ -142,7 +142,7 @@ QVector<Obj> ImgService::labeling(QImage thresh)
     }
     uniqLabelsNumbers = uniqLabelsNumbers.toSet().toList();
     std::sort(uniqLabelsNumbers.begin(), uniqLabelsNumbers.end());
-    qDebug() << "Номера объектов: " << uniqLabelsNumbers;
+    qDebug() << "Object IDs: " << uniqLabelsNumbers;
 
     QVector<Obj> objVector;
     for(int num : uniqLabelsNumbers)
@@ -161,11 +161,11 @@ QVector<Obj> ImgService::labeling(QImage thresh)
         }
     }
 
-    for(Obj ob : objVector)
-    {
-//        qDebug() << ob.points().length();
-        qDebug() << ob.s();
-    }
+//    for(Obj ob : objVector)
+//    {
+////        qDebug() << ob.points().length();
+//        qDebug() << ob.s();
+//    }
     return objVector;
 }
 
@@ -243,14 +243,12 @@ void ImgService::labelComponent(unsigned short W, unsigned short H, unsigned cha
         labelComponent(W, H, input, output, labelN, x, y+1);
 }
 
-QImage ImgService::fillPixel(QImage thresh, Obj obj, QColor clr)
+void ImgService::fillPixel(QImage *thresh, Obj obj, QColor clr)
 {
-    QImage timg = thresh;
     for(QPoint p : obj.points())
     {
-        timg.setPixelColor(p, clr);
+        thresh->setPixelColor(p, clr);
     }
-    return timg;
 }
 
 QVector<QPoint> ImgService::findContour(QImage &thresh)
@@ -281,7 +279,7 @@ QVector<QPoint> ImgService::findContour(QImage &thresh)
     return contour;
 }
 
-QRect ImgService::findSceletRect(QImage img)
+QRect ImgService::findSkeletRect(QImage img)
 {
     QVector<int> xVector, yVector;
     for(int j = 0; j < img.height(); j++)

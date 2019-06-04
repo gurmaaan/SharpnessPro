@@ -69,6 +69,8 @@ private slots:
 
     void on_master_btn_clicked();
 
+    void on_sharp_sldr_sliderMoved(int position);
+
 private:
     Ui::MainWindow *ui;
     QGraphicsScene *_scene;
@@ -79,6 +81,7 @@ private:
     QImage _originalImg;
     QImage _sobelImg;
     QImage _threshImg;
+    QRect _mainRect;
     QVector<Obj> _objVector;
     //--func
     void connectAll();

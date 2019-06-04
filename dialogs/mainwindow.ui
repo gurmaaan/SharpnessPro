@@ -119,7 +119,7 @@
      <x>0</x>
      <y>0</y>
      <width>1466</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_file">
@@ -145,7 +145,7 @@
    <property name="minimumSize">
     <size>
      <width>280</width>
-     <height>560</height>
+     <height>569</height>
     </size>
    </property>
    <property name="features">
@@ -548,6 +548,34 @@
       </widget>
      </item>
      <item>
+      <widget class="Line" name="line">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="sharp_H_lyt">
+       <item>
+        <widget class="QSlider" name="sharp_sldr">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="sharp_sb">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+         <property name="buttonSymbols">
+          <enum>QAbstractSpinBox::NoButtons</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
       <spacer name="verticalSpacer">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
@@ -706,12 +734,28 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>71</x>
-     <y>307</y>
+     <x>81</x>
+     <y>246</y>
     </hint>
     <hint type="destinationlabel">
-     <x>180</x>
-     <y>306</y>
+     <x>151</x>
+     <y>245</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sharp_sldr</sender>
+   <signal>sliderMoved(int)</signal>
+   <receiver>sharp_sb</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>76</x>
+     <y>545</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>120</x>
+     <y>537</y>
     </hint>
    </hints>
   </connection>

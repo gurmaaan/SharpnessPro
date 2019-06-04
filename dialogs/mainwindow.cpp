@@ -187,16 +187,12 @@ void MainWindow::setObjVector(const QVector<Obj> &objVector)
 
 void MainWindow::on_s_sldr_sliderMoved(int position)
 {
-    QImage timg = threshImg();
     for(auto obj : _objVector)
     {
-        obj.calcS();
-        int s = obj.s();
-        QColor clr = (s > position) ? QColor(Qt::white) : QColor(Qt::black);
-        timg = _imgService.fillPixel(timg, obj, clr);
-        setThreshImg(timg);
+        QColor clr = (obj.s() > position) ? QColor(Qt::white) : QColor(Qt::black);
+        _imgService.fillPixel(&_threshImg, obj, clr);
     }
-    showImg(timg);
+    showImg(_threshImg);
 }
 
 void MainWindow::on_s_gb_clicked(bool checked)
@@ -246,14 +242,12 @@ void MainWindow::on_applyMorph_btn_clicked()
 //    else if(ui->morphKernel_ellipse->isChecked())
 //        type = 2;
 
-    QImage morph = _imgProcessor->dilation(_threshImg, 9, 2);
+    QImage morph = _imgProcessor->dilation(_threshImg, ui->dilat_sb->value(), 2);
     showImg(originalImg());
-    QRect outerRect = _imgService.findSceletRect(morph);
-    qreal tlx = static_cast<qreal>(outerRect.topLeft().x());
-    qreal tly = static_cast<qreal>(outerRect.topLeft().y());
-    qreal w = static_cast<qreal>(outerRect.width());
-    qreal h = static_cast<qreal>(outerRect.height());
-    _scene->addEllipse(tlx, tly, w, h, QPen(QColor(Qt::red)));
+    _mainRect = _imgService.findSkeletRect(morph);
+    int sharpMax = _mainRect.width() / 2;
+    ui->sharp_sb->setMaximum(sharpMax); ui->sharp_sldr->setMaximum(sharpMax);
+    _scene->addEllipse(QRectF(_mainRect), QPen(QColor(Qt::red)));
 
 }
 
@@ -292,21 +286,52 @@ void MainWindow::on_master_btn_clicked()
 {
     QString filePath = "C:/Users/Dima/YandexDisk/EDUCATION/__UIR4/TestImages/F0000001.bmp";
     int thrVal = 48;
+    int sThresh = 3000;
+    int dilatSize = 15;
+    int dilatType = 2;
     //-------------------------------------------------------------------------------------
     QImage img(filePath);
     ui->path_le->setText(filePath);
-    showImg(img);
 
     QImage sobel = _imgService.evklid(_imgService.applySobelMask(img, Qt::Vertical),
                                       _imgService.applySobelMask(img, Qt::Horizontal));
-    showImg(sobel);
 
     QImage thresh = _imgService.threshold(sobel, thrVal);
     ui->threshold_gb->setEnabled(true); ui->threshold_gb->setChecked(true);
     ui->threshold_sldr->setValue(thrVal); ui->threshold_sb->setValue(thrVal);
-    showImg(thresh);
 
-    QVector<Obj> ov = _imgService.labeling(thresh);
-//    for (auto obj : ov)
-//        obj.print();
+    QVector<Obj> ovFirst = _imgService.labeling(thresh);
+    for (auto obj : ovFirst)
+    {
+        if(obj.s() <= sThresh)
+            _imgService.fillPixel(&thresh, obj, QColor(Qt::black));
+    }
+    ui->s_gb->setEnabled(true); ui->s_gb->setChecked(true);
+    ui->s_sldr->setValue(sThresh);
+
+    QImage morph = _imgProcessor->dilation(thresh, dilatSize, dilatType);
+    _mainRect = _imgService.findSkeletRect(morph);
+    int sharpMax = _mainRect.width() / 2;
+    ui->sharp_sb->setMaximum(sharpMax); ui->sharp_sldr->setMaximum(sharpMax);
+    showImg(img);
+    _scene->addEllipse(QRectF(_mainRect), QPen(QColor(Qt::red)));
+}
+
+void MainWindow::on_sharp_sldr_sliderMoved(int position)
+{
+    showImg(originalImg());
+    _scene->addEllipse(QRectF(_mainRect), QPen(QColor(Qt::red)));
+
+    int tlx, tly, brx, bry;
+    tlx = _mainRect.topLeft().x();
+    tly = _mainRect.topLeft().y();
+    brx = _mainRect.bottomRight().x();
+    bry = _mainRect.bottomRight().y();
+
+    QRect outer(QPoint(tlx - position, tly - position), QPoint(brx + position, bry + position));
+    QRect inner(QPoint(tlx + position, tly + position), QPoint(brx - position, bry - position));
+    QPen addPen = QPen(QColor(Qt::green));
+
+    _scene->addEllipse(QRectF(outer), addPen);
+    _scene->addEllipse(QRectF(inner), addPen);
 }
