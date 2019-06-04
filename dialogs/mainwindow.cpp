@@ -38,6 +38,7 @@ void MainWindow::showImg(QImage img)
     _scene->clear();
     QGraphicsPixmapItem *pmItem = new QGraphicsPixmapItem(QPixmap::fromImage(img));
     _scene->addItem(pmItem);
+    ui->graphicsView->fitInView(_scene->sceneRect(),Qt::KeepAspectRatio);
 }
 
 void MainWindow::on_actionOpenImg_triggered()
@@ -51,7 +52,7 @@ void MainWindow::on_actionOpenImg_triggered()
         setBaseImg(baseImg);
         setOriginalImg(baseImg);
         showImg(baseImg);
-        ui->graphicsView->fitInView(_scene->sceneRect(),Qt::KeepAspectRatio);
+
     }
 }
 
@@ -219,12 +220,6 @@ void MainWindow::on_s_gb_clicked(bool checked)
     }
 }
 
-void MainWindow::on_pushButton_clicked()
-{
-    QVector<QPoint> cnt = _imgService.findContour(_threshImg);
-    showImg(_threshImg);
-}
-
 void MainWindow::on_ero_sldr_sliderMoved(int position)
 {
     if(position % 2 ==1)
@@ -291,4 +286,27 @@ void MainWindow::on_dilat_sb_valueChanged(int arg1)
     else if(ui->morphKernel_ellipse->isChecked())
         type = 2;
     _imgProcessor->dilation(_threshImg, arg1, type);
+}
+
+void MainWindow::on_master_btn_clicked()
+{
+    QString filePath = "C:/Users/Dima/YandexDisk/EDUCATION/__UIR4/TestImages/F0000001.bmp";
+    int thrVal = 48;
+    //-------------------------------------------------------------------------------------
+    QImage img(filePath);
+    ui->path_le->setText(filePath);
+    showImg(img);
+
+    QImage sobel = _imgService.evklid(_imgService.applySobelMask(img, Qt::Vertical),
+                                      _imgService.applySobelMask(img, Qt::Horizontal));
+    showImg(sobel);
+
+    QImage thresh = _imgService.threshold(sobel, thrVal);
+    ui->threshold_gb->setEnabled(true); ui->threshold_gb->setChecked(true);
+    ui->threshold_sldr->setValue(thrVal); ui->threshold_sb->setValue(thrVal);
+    showImg(thresh);
+
+    QVector<Obj> ov = _imgService.labeling(thresh);
+//    for (auto obj : ov)
+//        obj.print();
 }

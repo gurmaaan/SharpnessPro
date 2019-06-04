@@ -8,6 +8,7 @@ Obj::Obj()
 Obj::Obj(int id) :
     _id(id)
 {
+    _s = 0;
 }
 
 Obj::Obj(const Obj &o) :
@@ -34,11 +35,13 @@ QVector<QPoint> Obj::points() const
 void Obj::setPoints(const QVector<QPoint> &points)
 {
     _points = points;
+    _s = points.length();
 }
 
 void Obj::appendPoint(QPoint p)
 {
     _points << p;
+    _s++;
 }
 
 int Obj::s() const

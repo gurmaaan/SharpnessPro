@@ -60,20 +60,14 @@ private slots:
     void on_threshold_sb_valueChanged(int arg1);
     void on_s_sldr_sliderMoved(int position);
     void on_s_gb_clicked(bool checked);
-
-    void on_pushButton_clicked();
-
     void on_ero_sldr_sliderMoved(int position);
-
     void on_dilat_sldr_sliderMoved(int position);
-
     void on_applyMorph_btn_clicked();
-
     void on_ero_sb_valueChanged(int arg1);
-
     void on_actionSaveImg_triggered();
-
     void on_dilat_sb_valueChanged(int arg1);
+
+    void on_master_btn_clicked();
 
 private:
     Ui::MainWindow *ui;

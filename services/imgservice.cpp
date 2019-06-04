@@ -162,7 +162,10 @@ QVector<Obj> ImgService::labeling(QImage thresh)
     }
 
     for(Obj ob : objVector)
-        ob.calcS();
+    {
+//        qDebug() << ob.points().length();
+        qDebug() << ob.s();
+    }
     return objVector;
 }
 
