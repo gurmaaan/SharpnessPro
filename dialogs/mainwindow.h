@@ -67,9 +67,12 @@ private slots:
     void on_actionSaveImg_triggered();
     void on_dilat_sb_valueChanged(int arg1);
 
-    void on_master_btn_clicked();
 
     void on_sharp_sldr_sliderMoved(int position);
+
+    void on_sharpCalc_btn_clicked();
+
+    void on_action_master_triggered();
 
 private:
     Ui::MainWindow *ui;
@@ -81,7 +84,11 @@ private:
     QImage _originalImg;
     QImage _sobelImg;
     QImage _threshImg;
+
     QRect _mainRect;
+    QRect _outerRect;
+    QRect _innerRect;
+
     QVector<Obj> _objVector;
     //--func
     void connectAll();

@@ -142,7 +142,6 @@ QVector<Obj> ImgService::labeling(QImage thresh)
     }
     uniqLabelsNumbers = uniqLabelsNumbers.toSet().toList();
     std::sort(uniqLabelsNumbers.begin(), uniqLabelsNumbers.end());
-    qDebug() << "Object IDs: " << uniqLabelsNumbers;
 
     QVector<Obj> objVector;
     for(int num : uniqLabelsNumbers)
@@ -259,7 +258,6 @@ QVector<QPoint> ImgService::findContour(QImage &thresh)
         for(int x = 1; x < thresh.width() - 1; x++)
         {
             bool p  = (thresh.pixelColor(x  ,y  ) == QColor(Qt::white));
-
             bool p1 = (thresh.pixelColor(x-1,y-1) == QColor(Qt::black));
             bool p2 = (thresh.pixelColor(x  ,y-1) == QColor(Qt::black));
             bool p3 = (thresh.pixelColor(x+1,y-1) == QColor(Qt::black));
@@ -304,7 +302,6 @@ QRect ImgService::findSkeletRect(QImage img)
     yCenter = (yMax - yMin) / 2;
     xCenter = (xMax - xMin) / 2;
 
-    qDebug() << xMin << xMax << yMin << yMax << xCenter << yCenter;
     QColor circleClr = QColor(Qt::white);
     int widthLeft = 0, widthRight = 0;
 
@@ -313,7 +310,6 @@ QRect ImgService::findSkeletRect(QImage img)
         widthLeft +=1;
         circleClr = img.pixelColor(xMin + widthLeft, yCenter);
     }
-    qDebug() << "Left: " << widthLeft;
 
     circleClr = QColor(Qt::white);
 
@@ -322,8 +318,6 @@ QRect ImgService::findSkeletRect(QImage img)
         widthRight +=1;
         circleClr = img.pixelColor(xMax - widthRight, yCenter);
     }
-
-    qDebug() << "Right: " <<  widthRight;
 
     int w = (widthLeft + widthRight) / 4;
 

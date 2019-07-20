@@ -243,11 +243,11 @@ void MainWindow::on_applyMorph_btn_clicked()
 //        type = 2;
 
     QImage morph = _imgProcessor->dilation(_threshImg, ui->dilat_sb->value(), 2);
-    showImg(originalImg());
-    _mainRect = _imgService.findSkeletRect(morph);
-    int sharpMax = _mainRect.width() / 2;
-    ui->sharp_sb->setMaximum(sharpMax); ui->sharp_sldr->setMaximum(sharpMax);
-    _scene->addEllipse(QRectF(_mainRect), QPen(QColor(Qt::red)));
+    showImg(morph);
+//    _mainRect = _imgService.findSkeletRect(morph);
+//    int sharpMax = _mainRect.width() / 2;
+//    ui->sharp_sb->setMaximum(sharpMax); ui->sharp_sldr->setMaximum(sharpMax);
+//    _scene->addEllipse(QRectF(_mainRect), QPen(QColor(Qt::red)));
 
 }
 
@@ -282,15 +282,75 @@ void MainWindow::on_dilat_sb_valueChanged(int arg1)
     _imgProcessor->dilation(_threshImg, arg1, type);
 }
 
-void MainWindow::on_master_btn_clicked()
+void MainWindow::on_sharp_sldr_sliderMoved(int position)
+{
+    showImg(originalImg());
+    _scene->addEllipse(QRectF(_mainRect), QPen(QColor(Qt::red)));
+
+    int tlx, tly, brx, bry;
+    tlx = _mainRect.topLeft().x();
+    tly = _mainRect.topLeft().y();
+    brx = _mainRect.bottomRight().x();
+    bry = _mainRect.bottomRight().y();
+
+    _outerRect = QRect(QPoint(tlx - position, tly - position), QPoint(brx + position, bry + position));
+    _innerRect = QRect(QPoint(tlx + position, tly + position), QPoint(brx - position, bry - position));
+    QPen addPen = QPen(QColor(Qt::green));
+
+    _scene->addEllipse(QRectF(_outerRect), addPen);
+    _scene->addEllipse(QRectF(_innerRect), addPen);
+}
+
+void MainWindow::on_sharpCalc_btn_clicked()
+{
+    QVector<QPoint> innerPointVector;
+    QVector<QPoint> outerPointVector;
+    int area_w = ui->sharp_sb->value();
+    //(x - a)^2 + (y-b)^2 = r^2
+    int r = (_mainRect.width() + _mainRect.height()) / 4;
+    int inner_low_r = (r - area_w) * (r - area_w);
+    int inner_high_r = r * r;
+    int outer_low_r = r * r;
+    int outer_high_r = (r + area_w) * (r + area_w);
+    int xc = _mainRect.center().x();
+    int yc = _mainRect.center().y();
+
+    for(int x = 0; x < _originalImg.width(); x++)
+    {
+        int xn = x - xc;
+
+        for(int y = 0; y < _originalImg.height(); y++)
+        {
+            int yn = y - yc;
+            int coord_r = xn *xn + yn * yn;
+
+            if ( (coord_r > inner_low_r) && (coord_r < inner_high_r) )
+            {
+                innerPointVector << QPoint(x, y);
+            }
+
+            if( (coord_r > outer_low_r) && (coord_r < outer_high_r) )
+            {
+               outerPointVector << QPoint(x, y);
+            }
+        }
+    }
+
+    qDebug() << "inner count: " << innerPointVector.size() << endl << "outer count: " << outerPointVector.count();
+    showImg(_originalImg);
+}
+
+void MainWindow::on_action_master_triggered()
 {
     QString filePath = "C:/Users/Dima/YandexDisk/EDUCATION/__UIR4/TestImages/F0000001.bmp";
     int thrVal = 48;
     int sThresh = 3000;
-    int dilatSize = 15;
+    int dilatSize = 8;
     int dilatType = 2;
+    int ringSize = 10;
     //-------------------------------------------------------------------------------------
     QImage img(filePath);
+    setOriginalImg(img);
     ui->path_le->setText(filePath);
 
     QImage sobel = _imgService.evklid(_imgService.applySobelMask(img, Qt::Vertical),
@@ -310,28 +370,14 @@ void MainWindow::on_master_btn_clicked()
     ui->s_sldr->setValue(sThresh);
 
     QImage morph = _imgProcessor->dilation(thresh, dilatSize, dilatType);
+    ui->dilat_cb->setChecked(true);
+    ui->dilat_sldr->setValue(dilatSize); ui->dilat_sb->setValue(dilatSize);
+    ui->morphKernel_ellipse->setChecked(true);
     _mainRect = _imgService.findSkeletRect(morph);
     int sharpMax = _mainRect.width() / 2;
     ui->sharp_sb->setMaximum(sharpMax); ui->sharp_sldr->setMaximum(sharpMax);
     showImg(img);
     _scene->addEllipse(QRectF(_mainRect), QPen(QColor(Qt::red)));
-}
-
-void MainWindow::on_sharp_sldr_sliderMoved(int position)
-{
-    showImg(originalImg());
-    _scene->addEllipse(QRectF(_mainRect), QPen(QColor(Qt::red)));
-
-    int tlx, tly, brx, bry;
-    tlx = _mainRect.topLeft().x();
-    tly = _mainRect.topLeft().y();
-    brx = _mainRect.bottomRight().x();
-    bry = _mainRect.bottomRight().y();
-
-    QRect outer(QPoint(tlx - position, tly - position), QPoint(brx + position, bry + position));
-    QRect inner(QPoint(tlx + position, tly + position), QPoint(brx - position, bry - position));
-    QPen addPen = QPen(QColor(Qt::green));
-
-    _scene->addEllipse(QRectF(outer), addPen);
-    _scene->addEllipse(QRectF(inner), addPen);
+    on_sharp_sldr_sliderMoved(ringSize);
+    ui->sharp_sb->setValue(ringSize); ui->sharp_sldr->setValue(ringSize);
 }
