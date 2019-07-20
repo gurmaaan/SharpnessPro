@@ -28,6 +28,11 @@ void MainWindow::setupWidgets()
     _scene = new QGraphicsScene;
     ui->graphicsView->setScene(_scene);
     _imgProcessor = new ImgProcessor();
+
+    _plot = ui->plot_view;
+    //_plot->legend->setVisible(false);
+    _plot->xAxis->setLabel("Расстояние от границы");
+    _plot->yAxis->setLabel("Коэффициент резкости");
 }
 
 void MainWindow::showImg(QImage img)
@@ -302,5 +307,29 @@ void MainWindow::on_action_master_triggered()
 
 void MainWindow::on_plot_btn_clicked()
 {
+    QVector<double> areaWVector;
+    QVector<double> koeffVector;
 
+    for(int i = 1; i < ui->sharp_sb->maximum(); i++)
+    {
+        areaWVector << static_cast<double>(i);
+        koeffVector << _imgService.sharpnessK(_originalImg, _mainRect, i);
+    }
+
+    double maxW = static_cast<double>(ui->sharp_sb->maximum());
+    double maxk = *std::max_element(koeffVector.begin(), koeffVector.end());
+
+    _plot->xAxis->setRange(0, maxW);
+    _plot->yAxis->setRange(0, maxk);
+    _plot->addGraph();
+    int gn = _plot->graphCount() - 1;
+    _plot->graph(gn)->setPen(QColor(Qt::red));
+    _plot->graph(gn)->setLineStyle(QCPGraph::lsLine);
+    _plot->graph(gn)->setScatterStyle( QCPScatterStyle(QCPScatterStyle::ssDisc, 4) );
+    _plot->graph(gn)->setName("График зависимости коэффициента резкости от расстояния от границы объекта");
+    _plot->graph(gn)->setData(areaWVector, koeffVector);
+    _plot->axisRect()->setupFullAxesBox();
+    _plot->replot();
+
+    ui->tabWidget->setCurrentIndex(1);
 }

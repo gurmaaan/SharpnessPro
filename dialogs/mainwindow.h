@@ -13,6 +13,7 @@
 #include <services/imgservice.h>
 #include <services/obj.h>
 #include <services/imgprocessor.h>
+#include <widgets/qcustomplot.h>
 
 namespace Ui {
 class MainWindow;
@@ -77,6 +78,8 @@ private:
     QRect _mainRect;
     QRect _outerRect;
     QRect _innerRect;
+
+    QCustomPlot *_plot;
 
     QVector<Obj> _objVector;
     //--func

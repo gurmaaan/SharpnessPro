@@ -362,8 +362,8 @@ double ImgService::sharpnessK(QImage img, QRect rect, int ringWidth)
         }
     }
 
-    qDebug() << "inner count: " << innerPointVector.size() << endl
-             << "outer count: " << outerPointVector.count();
+//    qDebug() << "inner count: " << innerPointVector.size() << endl
+//             << "outer count: " << outerPointVector.count();
 
 
     // inner -> -1 * яркость
