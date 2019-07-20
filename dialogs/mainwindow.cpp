@@ -27,8 +27,6 @@ void MainWindow::setupWidgets()
 {
     _scene = new QGraphicsScene;
     ui->graphicsView->setScene(_scene);
-    ui->zoom_V_lyt->setAlignment(Qt::AlignHCenter);
-    setScaleRatio(1.0);
     _imgProcessor = new ImgProcessor();
 }
 
@@ -70,57 +68,6 @@ QImage MainWindow::baseImg() const
 void MainWindow::setBaseImg(const QImage &baseImg)
 {
     _baseImg = baseImg;
-}
-
-void MainWindow::on_actionZoomIn_triggered()
-{
-    double newScaleRatio = scaleRatio() + 0.15;
-    setScaleRatio(newScaleRatio);
-    int newSliderValue = static_cast<int>(newScaleRatio) * 100;
-    ui->zoom_sldr->setValue(newSliderValue);
-}
-
-void MainWindow::on_actionZoomOut_triggered()
-{
-    double newScaleRatio = scaleRatio() - 0.15;
-    setScaleRatio(newScaleRatio);
-    int newSliderValue = static_cast<int>(newScaleRatio) * 100;
-    ui->zoom_sldr->setValue(newSliderValue);
-}
-
-void MainWindow::on_zoom_sldr_sliderMoved(int position)
-{
-    double dPosition = static_cast<double>(position) / 100.0;
-    setScaleRatio(dPosition);
-}
-
-double MainWindow::scaleRatio() const
-{
-    return _scaleRatio;
-}
-
-void MainWindow::setScaleRatio(double scaleRatio)
-{
-    _scaleRatio = scaleRatio;
-    ui->zoom_sb->setValue(scaleRatio);
-}
-
-void MainWindow::on_zoom_sb_valueChanged(double arg1)
-{
-    if(_scene->items().length() > 0)
-    {
-        QImage bi = baseImg();
-        double newWd = static_cast<double>(bi.width()) * arg1;
-        double newHd = static_cast<double>(bi.height()) * arg1;
-        int newW = static_cast<int>(newWd);
-        int newH = static_cast<int>(newHd);
-        bi = bi.scaled(newW, newH);
-        showImg(bi);
-    }
-    else
-    {
-        QMessageBox::critical(nullptr, "Ошибка", "Ни одного изображения не выбрано, зумирование невозможно. Выберите изображение и повторите попытку.");
-    }
 }
 
 void MainWindow::on_calcSobel_btn_clicked()
@@ -243,11 +190,11 @@ void MainWindow::on_applyMorph_btn_clicked()
 //        type = 2;
 
     QImage morph = _imgProcessor->dilation(_threshImg, ui->dilat_sb->value(), 2);
-    showImg(morph);
-//    _mainRect = _imgService.findSkeletRect(morph);
-//    int sharpMax = _mainRect.width() / 2;
-//    ui->sharp_sb->setMaximum(sharpMax); ui->sharp_sldr->setMaximum(sharpMax);
-//    _scene->addEllipse(QRectF(_mainRect), QPen(QColor(Qt::red)));
+    //showImg(morph);
+    _mainRect = _imgService.findSkeletRect(morph);
+    int sharpMax = _mainRect.width() / 2;
+    ui->sharp_sb->setMaximum(sharpMax); ui->sharp_sldr->setMaximum(sharpMax);
+    _scene->addEllipse(QRectF(_mainRect), QPen(QColor(Qt::red)));
 
 }
 
@@ -303,41 +250,8 @@ void MainWindow::on_sharp_sldr_sliderMoved(int position)
 
 void MainWindow::on_sharpCalc_btn_clicked()
 {
-    QVector<QPoint> innerPointVector;
-    QVector<QPoint> outerPointVector;
-    int area_w = ui->sharp_sb->value();
-    //(x - a)^2 + (y-b)^2 = r^2
-    int r = (_mainRect.width() + _mainRect.height()) / 4;
-    int inner_low_r = (r - area_w) * (r - area_w);
-    int inner_high_r = r * r;
-    int outer_low_r = r * r;
-    int outer_high_r = (r + area_w) * (r + area_w);
-    int xc = _mainRect.center().x();
-    int yc = _mainRect.center().y();
-
-    for(int x = 0; x < _originalImg.width(); x++)
-    {
-        int xn = x - xc;
-
-        for(int y = 0; y < _originalImg.height(); y++)
-        {
-            int yn = y - yc;
-            int coord_r = xn *xn + yn * yn;
-
-            if ( (coord_r > inner_low_r) && (coord_r < inner_high_r) )
-            {
-                innerPointVector << QPoint(x, y);
-            }
-
-            if( (coord_r > outer_low_r) && (coord_r < outer_high_r) )
-            {
-               outerPointVector << QPoint(x, y);
-            }
-        }
-    }
-
-    qDebug() << "inner count: " << innerPointVector.size() << endl << "outer count: " << outerPointVector.count();
     showImg(_originalImg);
+    qDebug() << _imgService.sharpnessK(_originalImg, _mainRect, ui->sharp_sb->value());
 }
 
 void MainWindow::on_action_master_triggered()
@@ -345,9 +259,9 @@ void MainWindow::on_action_master_triggered()
     QString filePath = "C:/Users/Dima/YandexDisk/EDUCATION/__UIR4/TestImages/F0000001.bmp";
     int thrVal = 48;
     int sThresh = 3000;
-    int dilatSize = 8;
+    int dilatSize = 4;
     int dilatType = 2;
-    int ringSize = 10;
+    int ringSize = 8;
     //-------------------------------------------------------------------------------------
     QImage img(filePath);
     setOriginalImg(img);
@@ -361,13 +275,17 @@ void MainWindow::on_action_master_triggered()
     ui->threshold_sldr->setValue(thrVal); ui->threshold_sb->setValue(thrVal);
 
     QVector<Obj> ovFirst = _imgService.labeling(thresh);
+    QVector<int> objSVector;
     for (auto obj : ovFirst)
     {
+        objSVector << obj.s();
         if(obj.s() <= sThresh)
             _imgService.fillPixel(&thresh, obj, QColor(Qt::black));
     }
+    int max_s = *std::max_element(objSVector.begin(), objSVector.end());
+    ui->sMax_sb->setMaximum(max_s); ui->sMax_sb->setValue(max_s);
+    ui->s_sldr->setMaximum(max_s); ui->s_sldr->setValue(sThresh);
     ui->s_gb->setEnabled(true); ui->s_gb->setChecked(true);
-    ui->s_sldr->setValue(sThresh);
 
     QImage morph = _imgProcessor->dilation(thresh, dilatSize, dilatType);
     ui->dilat_cb->setChecked(true);
@@ -380,4 +298,9 @@ void MainWindow::on_action_master_triggered()
     _scene->addEllipse(QRectF(_mainRect), QPen(QColor(Qt::red)));
     on_sharp_sldr_sliderMoved(ringSize);
     ui->sharp_sb->setValue(ringSize); ui->sharp_sldr->setValue(ringSize);
+}
+
+void MainWindow::on_plot_btn_clicked()
+{
+
 }

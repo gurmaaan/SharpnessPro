@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui printsupport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -31,7 +31,8 @@ SOURCES += \
         services/imgservice.cpp \
         services/mask.cpp \
     services/obj.cpp \
-    services/imgprocessor.cpp
+    services/imgprocessor.cpp \
+    widgets/qcustomplot.cpp
 
 HEADERS += \
         dialogs/mainwindow.h \
@@ -39,7 +40,8 @@ HEADERS += \
         services/imgservice.h \
         services/mask.h \
     services/obj.h \
-    services/imgprocessor.h
+    services/imgprocessor.h \
+    widgets/qcustomplot.h
 
 FORMS += \
         dialogs/mainwindow.ui

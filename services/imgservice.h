@@ -33,6 +33,7 @@ public:
 
     QVector<QPoint> findContour(QImage &thresh);
     QRect findSkeletRect(QImage img);
+    double sharpnessK(QImage img, QRect rect, int ringWidth);
 };
 
 #endif // IMGSERVICE_H

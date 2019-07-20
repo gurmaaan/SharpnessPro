@@ -324,3 +324,61 @@ QRect ImgService::findSkeletRect(QImage img)
     QRect offset(QPoint(xMin+w, yMin+w), QPoint(xMax-w, yMax-w));
     return offset;
 }
+
+double ImgService::sharpnessK(QImage img, QRect rect, int ringWidth)
+{
+    QVector<QPoint> innerPointVector;
+    QVector<QPoint> outerPointVector;
+    int area_w = ringWidth;
+    //(x - a)^2 + (y-b)^2 = r^2
+    int r = (rect.width() + rect.height()) / 4;
+    int inner_low_r = (r - area_w) * (r - area_w);
+    int inner_high_r = r * r;
+    int outer_low_r = r * r;
+    int outer_high_r = (r + area_w) * (r + area_w);
+    int xc = rect.center().x();
+    int yc = rect.center().y();
+
+    for(int x = 0; x < img.width(); x++)
+    {
+        int xn = x - xc;
+
+        for(int y = 0; y < img.height(); y++)
+        {
+            int yn = y - yc;
+            int coord_r = xn *xn + yn * yn;
+
+            if ( (coord_r > inner_low_r) && (coord_r < inner_high_r) )
+            {
+                innerPointVector << QPoint(x, y);
+                //_originalImg.setPixelColor(x, y, QColor(Qt::green));
+            }
+
+            if( (coord_r > outer_low_r) && (coord_r < outer_high_r) )
+            {
+               outerPointVector << QPoint(x, y);
+               //_originalImg.setPixelColor(x, y, QColor(Qt::blue));
+            }
+        }
+    }
+
+    qDebug() << "inner count: " << innerPointVector.size() << endl
+             << "outer count: " << outerPointVector.count();
+
+
+    // inner -> -1 * яркость
+    // outer -> +1 * яркость
+
+    long int sum = 0;
+    for(QPoint p : innerPointVector)
+        sum += qGray(img.pixel(p)) * -1;
+
+    for(QPoint p : outerPointVector)
+        sum += qGray(img.pixel(p));
+
+    if(sum < 0)
+        sum *= -1;
+
+    double coeff = static_cast<double>(sum) / static_cast<double>(outerPointVector.count());
+    return coeff;
+}

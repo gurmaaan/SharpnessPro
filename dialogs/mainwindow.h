@@ -29,9 +29,6 @@ public:
     QImage baseImg() const;
     void setBaseImg(const QImage &baseImg);
 
-    double scaleRatio() const;
-    void setScaleRatio(double scaleRatio);
-
     QImage originalImg() const;
     void setOriginalImg(const QImage &originalImg);
 
@@ -52,10 +49,6 @@ public slots:
 private slots:
     void on_actionOpenImg_triggered();
     void on_actionExit_triggered();
-    void on_actionZoomIn_triggered();
-    void on_actionZoomOut_triggered();
-    void on_zoom_sldr_sliderMoved(int position);
-    void on_zoom_sb_valueChanged(double arg1);
     void on_calcSobel_btn_clicked();
     void on_threshold_sb_valueChanged(int arg1);
     void on_s_sldr_sliderMoved(int position);
@@ -66,18 +59,14 @@ private slots:
     void on_ero_sb_valueChanged(int arg1);
     void on_actionSaveImg_triggered();
     void on_dilat_sb_valueChanged(int arg1);
-
-
     void on_sharp_sldr_sliderMoved(int position);
-
     void on_sharpCalc_btn_clicked();
-
     void on_action_master_triggered();
+    void on_plot_btn_clicked();
 
 private:
     Ui::MainWindow *ui;
     QGraphicsScene *_scene;
-    double _scaleRatio;
     ImgService _imgService;
     ImgProcessor *_imgProcessor;
     QImage _baseImg;
