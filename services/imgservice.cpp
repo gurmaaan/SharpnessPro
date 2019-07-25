@@ -110,10 +110,15 @@ QImage ImgService::threshold(const QImage &sobelImg, int porog)
 
 int ImgService::validComponent(int c)
 {
-    if(c > 255)
-        return 255;
-    else {
-        return c;
+    if(c > 0)
+    {
+        if(c > 255)
+            return 255;
+        else {
+            return c;
+        }
+    } else {
+        return 0;
     }
 }
 
@@ -248,134 +253,4 @@ void ImgService::fillPixel(QImage *thresh, Obj obj, QColor clr)
     {
         thresh->setPixelColor(p, clr);
     }
-}
-
-QVector<QPoint> ImgService::findContour(QImage &thresh)
-{
-    QVector<QPoint> contour;
-    for(int y = 1; y < thresh.height() - 1; y++)
-    {
-        for(int x = 1; x < thresh.width() - 1; x++)
-        {
-            bool p  = (thresh.pixelColor(x  ,y  ) == QColor(Qt::white));
-            bool p1 = (thresh.pixelColor(x-1,y-1) == QColor(Qt::black));
-            bool p2 = (thresh.pixelColor(x  ,y-1) == QColor(Qt::black));
-            bool p3 = (thresh.pixelColor(x+1,y-1) == QColor(Qt::black));
-            bool p4 = (thresh.pixelColor(x-1,y  ) == QColor(Qt::black));
-            bool p6 = (thresh.pixelColor(x+1,y  ) == QColor(Qt::black));
-            bool p7 = (thresh.pixelColor(x-1,y+1) == QColor(Qt::black));
-            bool p8 = (thresh.pixelColor(x  ,y+1) == QColor(Qt::black));
-            bool p9 = (thresh.pixelColor(x+1,y+1) == QColor(Qt::black));
-
-            if( p && (p1 || p2 || p3 || p4 || p6 || p7 || p8 || p9) )
-            {
-                contour << QPoint(x,y);
-                thresh.setPixelColor(x,y,QColor(Qt::red));
-            }
-        }
-    }
-    return contour;
-}
-
-QRect ImgService::findSkeletRect(QImage img)
-{
-    QVector<int> xVector, yVector;
-    for(int j = 0; j < img.height(); j++)
-    {
-        for(int i = 0; i < img.width(); i++)
-        {
-            if(img.pixelColor(i,j) == QColor(Qt::white))
-            {
-                xVector << i;
-                yVector << j;
-            }
-        }
-    }
-
-    int xMin, xMax, yMin, yMax;
-    xMin = *std::min_element(xVector.begin(), xVector.end());
-    xMax = *std::max_element(xVector.begin(), xVector.end());
-    yMin = *std::min_element(yVector.begin(), yVector.end());
-    yMax = *std::max_element(yVector.begin(), yVector.end());
-
-    int yCenter, xCenter;
-    yCenter = (yMax - yMin) / 2;
-    xCenter = (xMax - xMin) / 2;
-
-    QColor circleClr = QColor(Qt::white);
-    int widthLeft = 0, widthRight = 0;
-
-    while (circleClr == QColor(Qt::white))
-    {
-        widthLeft +=1;
-        circleClr = img.pixelColor(xMin + widthLeft, yCenter);
-    }
-
-    circleClr = QColor(Qt::white);
-
-    while (circleClr == QColor(Qt::white))
-    {
-        widthRight +=1;
-        circleClr = img.pixelColor(xMax - widthRight, yCenter);
-    }
-
-    int w = (widthLeft + widthRight) / 4;
-
-    QRect offset(QPoint(xMin+w, yMin+w), QPoint(xMax-w, yMax-w));
-    return offset;
-}
-
-double ImgService::sharpnessK(QImage img, QRect rect, int ringWidth)
-{
-    QVector<QPoint> innerPointVector;
-    QVector<QPoint> outerPointVector;
-    int area_w = ringWidth;
-    //(x - a)^2 + (y-b)^2 = r^2
-    int r = (rect.width() + rect.height()) / 4;
-    int inner_low_r = (r - area_w) * (r - area_w);
-    int inner_high_r = r * r;
-    int outer_low_r = r * r;
-    int outer_high_r = (r + area_w) * (r + area_w);
-    int xc = rect.center().x();
-    int yc = rect.center().y();
-
-    for(int x = 0; x < img.width(); x++)
-    {
-        int xn = x - xc;
-
-        for(int y = 0; y < img.height(); y++)
-        {
-            int yn = y - yc;
-            int coord_r = xn *xn + yn * yn;
-
-            if ( (coord_r > inner_low_r) && (coord_r < inner_high_r) )
-            {
-                innerPointVector << QPoint(x, y);
-                //_originalImg.setPixelColor(x, y, QColor(Qt::green));
-            }
-
-            if( (coord_r > outer_low_r) && (coord_r < outer_high_r) )
-            {
-               outerPointVector << QPoint(x, y);
-               //_originalImg.setPixelColor(x, y, QColor(Qt::blue));
-            }
-        }
-    }
-
-    qDebug() << "inner count: " << innerPointVector.size() << endl
-             << "outer count: " << outerPointVector.size();
-
-
-    // inner -> -1 * яркость
-    // outer -> +1 * яркость
-
-    long int sumInner = 0, sumOuter = 0;
-    for(QPoint p : innerPointVector)
-        sumInner += qGray(img.pixel(p));
-
-    for(QPoint p : outerPointVector)
-        sumOuter += qGray(img.pixel(p));
-
-    double avInne =0;
-    return avInne;
 }
