@@ -92,7 +92,7 @@
     <number>1</number>
    </attribute>
    <widget class="QWidget" name="settingsDock_ctnt">
-    <layout class="QVBoxLayout" name="verticalLayout_5">
+    <layout class="QVBoxLayout" name="verticalLayout_4">
      <item>
       <widget class="QGroupBox" name="path_gb">
        <property name="title">
@@ -283,6 +283,52 @@
       </widget>
      </item>
      <item>
+      <widget class="QGroupBox" name="sharpness_gb">
+       <property name="title">
+        <string>Резкость</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <layout class="QHBoxLayout" name="sharpness_btn_H_lyt">
+          <item>
+           <spacer name="sharpness_btn_L_spcr">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="sharpness_btn">
+            <property name="text">
+             <string>Рассчитать</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="sharpness_btn_R_spcr">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
       <spacer name="verticalSpacer">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
@@ -290,7 +336,7 @@
        <property name="sizeHint" stdset="0">
         <size>
          <width>20</width>
-         <height>656</height>
+         <height>479</height>
         </size>
        </property>
       </spacer>

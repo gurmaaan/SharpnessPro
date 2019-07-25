@@ -254,3 +254,31 @@ void ImgService::fillPixel(QImage *thresh, Obj obj, QColor clr)
         thresh->setPixelColor(p, clr);
     }
 }
+
+double ImgService::sharpnessK(QImage sobelImg, QImage thrImg)
+{
+    QVector<QPoint> whitePoints;
+    for(int x = 0; x < thrImg.width(); x++)
+    {
+        for(int y = 0; y < thrImg.height(); y++)
+        {
+            if(thrImg.pixelColor(x, y) == QColor(Qt::white))
+                whitePoints << QPoint(x, y);
+        }
+    }
+
+    long int sum = 0;
+
+    if(whitePoints.size() > 0)
+    {
+        for(QPoint p : whitePoints)
+            sum += qGray(sobelImg.pixel(p));
+    }
+    else {
+        QMessageBox msgBox;
+        msgBox.setText("Ни одного белого пикселя");
+        msgBox.exec();
+    }
+    double k = static_cast<double>(sum) / static_cast<double>(whitePoints.count());
+    return k;
+}

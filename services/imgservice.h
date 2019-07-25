@@ -5,6 +5,7 @@
 #include <QImage>
 #include <QDebug>
 #include <QtMath>
+#include <QMessageBox>
 
 //
 #include <services/mask.h>
@@ -31,9 +32,8 @@ public:
                         int labelN, unsigned short x, unsigned short y);
     void fillPixel(QImage *thresh, Obj obj, QColor clr);
 
-    QVector<QPoint> findContour(QImage &thresh);
-    QRect findSkeletRect(QImage img);
-    double sharpnessK(QImage img, QRect rect, int ringWidth);
+    double sharpnessK(QImage sobelImg, QImage thrImg);
+
 };
 
 #endif // IMGSERVICE_H

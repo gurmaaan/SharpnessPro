@@ -205,3 +205,8 @@ void MainWindow::on_action_master_triggered()
     ui->s_sldr->setMaximum(max_s); ui->s_sldr->setValue(sThresh);
     ui->s_gb->setEnabled(true); ui->s_gb->setChecked(true);
 }
+
+void MainWindow::on_sharpness_btn_clicked()
+{
+    _imgService.sharpnessK(_sobelImg, _threshImg);
+}

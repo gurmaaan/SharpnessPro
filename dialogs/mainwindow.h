@@ -58,6 +58,8 @@ private slots:
     void on_actionSaveImg_triggered();
     void on_action_master_triggered();
 
+    void on_sharpness_btn_clicked();
+
 private:
     Ui::MainWindow *ui;
     QGraphicsScene *_scene;
