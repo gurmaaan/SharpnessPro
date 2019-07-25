@@ -195,11 +195,11 @@ void MainWindow::on_applyMorph_btn_clicked()
 //        type = 2;
 
     QImage morph = _imgProcessor->dilation(_threshImg, ui->dilat_sb->value(), 2);
-    //showImg(morph);
+    showImg(morph);
     _mainRect = _imgService.findSkeletRect(morph);
     int sharpMax = _mainRect.width() / 2;
     ui->sharp_sb->setMaximum(sharpMax); ui->sharp_sldr->setMaximum(sharpMax);
-    _scene->addEllipse(QRectF(_mainRect), QPen(QColor(Qt::red)));
+    //_scene->addEllipse(QRectF(_mainRect), QPen(QColor(Qt::red)));
 
 }
 

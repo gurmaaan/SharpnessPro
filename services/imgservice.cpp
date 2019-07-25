@@ -362,23 +362,20 @@ double ImgService::sharpnessK(QImage img, QRect rect, int ringWidth)
         }
     }
 
-//    qDebug() << "inner count: " << innerPointVector.size() << endl
-//             << "outer count: " << outerPointVector.count();
+    qDebug() << "inner count: " << innerPointVector.size() << endl
+             << "outer count: " << outerPointVector.size();
 
 
     // inner -> -1 * яркость
     // outer -> +1 * яркость
 
-    long int sum = 0;
+    long int sumInner = 0, sumOuter = 0;
     for(QPoint p : innerPointVector)
-        sum += qGray(img.pixel(p)) * -1;
+        sumInner += qGray(img.pixel(p));
 
     for(QPoint p : outerPointVector)
-        sum += qGray(img.pixel(p));
+        sumOuter += qGray(img.pixel(p));
 
-    if(sum < 0)
-        sum *= -1;
-
-    double coeff = static_cast<double>(sum) / static_cast<double>(outerPointVector.count());
-    return coeff;
+    double avInne =0;
+    return avInne;
 }
