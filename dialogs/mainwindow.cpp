@@ -30,8 +30,7 @@ void MainWindow::setupWidgets()
     _imgProcessor = new ImgProcessor();
 
     _plot = ui->plot_view;
-    //_plot->legend->setVisible(false);
-    _plot->xAxis->setLabel("Расстояние от границы");
+    _plot->xAxis->setLabel("Порог бинаризации");
     _plot->yAxis->setLabel("Коэффициент резкости");
 }
 
@@ -208,5 +207,57 @@ void MainWindow::on_action_master_triggered()
 
 void MainWindow::on_sharpness_btn_clicked()
 {
-    _imgService.sharpnessK(_sobelImg, _threshImg);
+    QString filePath = "C:/Users/Dima/YandexDisk/EDUCATION/__UIR4/TestImages/F0000001.bmp";
+    QImage img(filePath);
+    int thrBeg = 31;
+    int thrEnd = 62;
+
+    QImage sobel = _imgService.evklid(_imgService.applySobelMask(img, Qt::Vertical),
+                                      _imgService.applySobelMask(img, Qt::Horizontal));
+
+    QVector<double> thrValVector, sharpKVector_noFilter, sharpKVector_Filter;
+    for (int thr = thrBeg; thr <= thrEnd; ++thr)
+    {
+        thrValVector << static_cast<double>(thr);
+        QImage thrImg = _imgService.threshold(sobel, thr);
+        sharpKVector_noFilter << _imgService.sharpnessK(sobel, thrImg);
+
+        QVector<Obj> objVector = _imgService.labeling(thrImg);
+        QVector<int> objSVector;
+        for (auto obj : objVector)
+            objSVector << obj.s();
+        int max_s = *std::max_element(objSVector.begin(), objSVector.end());
+        for(auto obj : objVector)
+        {
+            if(obj.s() < max_s)
+                _imgService.fillPixel(&thrImg, obj, QColor(Qt::black));
+        }
+
+        sharpKVector_Filter << _imgService.sharpnessK(sobel, thrImg);
+    }
+
+    _plot->addGraph();
+    int gn = _plot->graphCount() - 1;
+    _plot->xAxis->setRange(static_cast<double>(thrBeg), static_cast<double>(thrEnd));
+    _plot->yAxis->setRange(*std::min_element(sharpKVector_noFilter.begin(), sharpKVector_noFilter.end()),
+                           *std::max_element(sharpKVector_Filter.begin(), sharpKVector_Filter.end()));
+    _plot->graph(gn)->setPen(QPen(Qt::red));
+    _plot->graph(gn)->setLineStyle(QCPGraph::lsLine);
+    _plot->graph(gn)->setScatterStyle( QCPScatterStyle(QCPScatterStyle::ssDisc, 4) );
+    _plot->graph(gn)->setData(thrValVector, sharpKVector_noFilter);
+    _plot->graph(gn)->setName("Изображение группы 1. Фильтрации по площади не производилось.");
+
+    _plot->addGraph();
+    gn++;
+    _plot->graph(gn)->setPen(QPen(Qt::blue));
+    _plot->graph(gn)->setLineStyle(QCPGraph::lsLine);
+    _plot->graph(gn)->setScatterStyle( QCPScatterStyle(QCPScatterStyle::ssDisc, 4) );
+    _plot->graph(gn)->setData(thrValVector, sharpKVector_Filter);
+    _plot->graph(gn)->setName("Изображение группы 1. Фильтрация по площади.");
+
+    _plot->legend->setVisible(true);
+    _plot->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignLeft|Qt::AlignTop);
+    _plot->replot();
+
+    ui->tabWidget->setCurrentIndex(1);
 }
