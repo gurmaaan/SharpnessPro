@@ -60,6 +60,12 @@ private slots:
 
     void on_sharpness_btn_clicked();
 
+    void on_actionSavePlot_triggered();
+
+    void on_plot_btn_clicked();
+
+    void on_thr_min_H_sldr_sliderMoved(int position);
+
 private:
     Ui::MainWindow *ui;
     QGraphicsScene *_scene;

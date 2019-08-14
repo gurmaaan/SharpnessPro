@@ -167,7 +167,7 @@ QVector<Obj> ImgService::labeling(QImage thresh)
 
 //    for(Obj ob : objVector)
 //    {
-////        qDebug() << ob.points().length();
+//        qDebug() << ob.points().length();
 //        qDebug() << ob.s();
 //    }
     return objVector;
@@ -238,13 +238,13 @@ void ImgService::labelComponent(unsigned short W, unsigned short H, unsigned cha
     output[index] = labelN;
 
     if (x > 0)
-        labelComponent(W, H, input, output, labelN, x-1, y);
+        labelComponent(W, H, input, output, labelN, x-1, y  );
     if (x < W-1)
-        labelComponent(W, H, input, output, labelN, x+1, y);
+        labelComponent(W, H, input, output, labelN, x+1, y  );
     if (y > 0)
-        labelComponent(W, H, input, output, labelN, x, y-1);
+        labelComponent(W, H, input, output, labelN, x  , y-1);
     if (y < H-1)
-        labelComponent(W, H, input, output, labelN, x, y+1);
+        labelComponent(W, H, input, output, labelN, x  , y+1);
 }
 
 void ImgService::fillPixel(QImage *thresh, Obj obj, QColor clr)
@@ -275,9 +275,8 @@ double ImgService::sharpnessK(QImage sobelImg, QImage thrImg)
             sum += qGray(sobelImg.pixel(p));
     }
     else {
-        QMessageBox msgBox;
-        msgBox.setText("Ни одного белого пикселя");
-        msgBox.exec();
+        //qDebug() << "Xui";
+        return 0;
     }
     double k = static_cast<double>(sum) / static_cast<double>(whitePoints.count());
     return k;

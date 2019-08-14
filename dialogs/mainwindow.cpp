@@ -207,10 +207,24 @@ void MainWindow::on_action_master_triggered()
 
 void MainWindow::on_sharpness_btn_clicked()
 {
-    QString filePath = "C:/Users/Dima/YandexDisk/EDUCATION/__UIR4/TestImages/F0000001.bmp";
-    QImage img(filePath);
-    int thrBeg = 31;
-    int thrEnd = 62;
+    ui->sharpness_sb->setValue(_imgService.sharpnessK(_sobelImg, _threshImg));
+}
+
+void MainWindow::on_actionSavePlot_triggered()
+{
+    QString fileName = QFileDialog::getSaveFileName(nullptr, "Сохранить график", DIR_PATH);
+    _plot->savePng(fileName);
+}
+
+void MainWindow::on_plot_btn_clicked()
+{
+    QString filePath_1 = "C:/Users/Dima/YandexDisk/EDUCATION/__UIR4/TestImages/F0000022.bmp";
+    QString filePath_2 = "C:/Users/Dima/YandexDisk/EDUCATION/__UIR4/TestImages/F0000051.bmp";
+    QImage img(filePath_2);
+    setOriginalImg(img);
+    showImg(img);
+    int thrBeg = 38;
+    int thrEnd = 61;
 
     QImage sobel = _imgService.evklid(_imgService.applySobelMask(img, Qt::Vertical),
                                       _imgService.applySobelMask(img, Qt::Horizontal));
@@ -245,7 +259,7 @@ void MainWindow::on_sharpness_btn_clicked()
     _plot->graph(gn)->setLineStyle(QCPGraph::lsLine);
     _plot->graph(gn)->setScatterStyle( QCPScatterStyle(QCPScatterStyle::ssDisc, 4) );
     _plot->graph(gn)->setData(thrValVector, sharpKVector_noFilter);
-    _plot->graph(gn)->setName("Изображение группы 1. Фильтрации по площади не производилось.");
+    _plot->graph(gn)->setName("Изображение группы 2. Фильтрации по площади не производилось.");
 
     _plot->addGraph();
     gn++;
@@ -253,11 +267,16 @@ void MainWindow::on_sharpness_btn_clicked()
     _plot->graph(gn)->setLineStyle(QCPGraph::lsLine);
     _plot->graph(gn)->setScatterStyle( QCPScatterStyle(QCPScatterStyle::ssDisc, 4) );
     _plot->graph(gn)->setData(thrValVector, sharpKVector_Filter);
-    _plot->graph(gn)->setName("Изображение группы 1. Фильтрация по площади.");
+    _plot->graph(gn)->setName("Изображение группы 2. Фильтрация по площади.");
 
     _plot->legend->setVisible(true);
     _plot->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignLeft|Qt::AlignTop);
     _plot->replot();
 
     ui->tabWidget->setCurrentIndex(1);
+}
+
+void MainWindow::on_thr_min_H_sldr_sliderMoved(int position)
+{
+    ui->thr_max_H_sldr->setMinimum(position+1);
 }

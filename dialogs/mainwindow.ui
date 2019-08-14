@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1466</width>
-    <height>888</height>
+    <width>1122</width>
+    <height>699</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -41,9 +41,28 @@
        <attribute name="title">
         <string>График</string>
        </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_7">
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
         <item>
-         <widget class="QCustomPlot" name="plot_view"/>
+         <widget class="QScrollArea" name="scrollArea">
+          <property name="widgetResizable">
+           <bool>true</bool>
+          </property>
+          <widget class="QWidget" name="scrollAreaWidgetContents">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>797</width>
+             <height>614</height>
+            </rect>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_5">
+            <item>
+             <widget class="QCustomPlot" name="plot_view"/>
+            </item>
+           </layout>
+          </widget>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -56,7 +75,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1466</width>
+     <width>1122</width>
      <height>21</height>
     </rect>
    </property>
@@ -66,6 +85,7 @@
     </property>
     <addaction name="actionOpenImg"/>
     <addaction name="actionSaveImg"/>
+    <addaction name="actionSavePlot"/>
     <addaction name="action_master"/>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
@@ -291,7 +311,14 @@
         <item>
          <layout class="QHBoxLayout" name="sharpness_btn_H_lyt">
           <item>
-           <spacer name="sharpness_btn_L_spcr">
+           <widget class="QPushButton" name="sharpness_btn">
+            <property name="text">
+             <string>Текущая</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="sharpness_btn_R_spcr">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -304,14 +331,104 @@
            </spacer>
           </item>
           <item>
-           <widget class="QPushButton" name="sharpness_btn">
-            <property name="text">
-             <string>Рассчитать</string>
+           <widget class="QDoubleSpinBox" name="sharpness_sb">
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+            <property name="buttonSymbols">
+             <enum>QAbstractSpinBox::NoButtons</enum>
+            </property>
+            <property name="maximum">
+             <double>255.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="Line" name="line_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="thr_range_h_lyt">
+          <item>
+           <widget class="QSpinBox" name="thr_min_sb">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="buttonSymbols">
+             <enum>QAbstractSpinBox::NoButtons</enum>
+            </property>
+            <property name="maximum">
+             <number>255</number>
             </property>
            </widget>
           </item>
           <item>
-           <spacer name="sharpness_btn_R_spcr">
+           <widget class="QSlider" name="thr_min_H_sldr">
+            <property name="maximum">
+             <number>255</number>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSlider" name="thr_max_H_sldr">
+            <property name="maximum">
+             <number>255</number>
+            </property>
+            <property name="value">
+             <number>255</number>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="thr_max_sb">
+            <property name="buttonSymbols">
+             <enum>QAbstractSpinBox::NoButtons</enum>
+            </property>
+            <property name="maximum">
+             <number>255</number>
+            </property>
+            <property name="value">
+             <number>255</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <item>
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="plot_btn">
+            <property name="text">
+             <string>График</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_2">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -336,7 +453,7 @@
        <property name="sizeHint" stdset="0">
         <size>
          <width>20</width>
-         <height>479</height>
+         <height>245</height>
         </size>
        </property>
       </spacer>
@@ -380,7 +497,7 @@
      <normaloff>:/icons/save_ic.png</normaloff>:/icons/save_ic.png</iconset>
    </property>
    <property name="text">
-    <string>Сохранить</string>
+    <string>Сохранить изображение</string>
    </property>
    <property name="toolTip">
     <string>Сохранить текущее отображение в файл</string>
@@ -402,6 +519,21 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+M</string>
+   </property>
+  </action>
+  <action name="actionSavePlot">
+   <property name="icon">
+    <iconset resource="../sources.qrc">
+     <normaloff>:/icons/plot_ic.png</normaloff>:/icons/plot_ic.png</iconset>
+   </property>
+   <property name="text">
+    <string>Сохранить график</string>
+   </property>
+   <property name="toolTip">
+    <string>Сохранить текущий график в файл</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+S</string>
    </property>
   </action>
  </widget>
@@ -446,6 +578,38 @@
     <hint type="destinationlabel">
      <x>151</x>
      <y>245</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>thr_min_H_sldr</sender>
+   <signal>sliderMoved(int)</signal>
+   <receiver>thr_min_sb</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>67</x>
+     <y>412</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>31</x>
+     <y>418</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>thr_max_H_sldr</sender>
+   <signal>sliderMoved(int)</signal>
+   <receiver>thr_max_sb</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>195</x>
+     <y>411</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>241</x>
+     <y>416</y>
     </hint>
    </hints>
   </connection>
