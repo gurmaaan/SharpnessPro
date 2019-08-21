@@ -229,6 +229,7 @@ void ImgService::labelImg(unsigned short W, unsigned short H, unsigned char *inp
 
 void ImgService::labelComponent(unsigned short W, unsigned short H, unsigned char *input, int *output, int labelN, unsigned short x, unsigned short y)
 {
+    //BUG: тут почему-то вылетает если порог меньше 5
     int index = x + W*y;
     if (input[index] == 0)
         return;

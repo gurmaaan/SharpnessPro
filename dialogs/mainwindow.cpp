@@ -45,7 +45,7 @@ void MainWindow::showImg(QImage img)
 
 void MainWindow::on_actionOpenImg_triggered()
 {
-    QString fileName = QFileDialog::getOpenFileName(nullptr, DIR_CAPTION, DIR_PATH);
+    QString fileName = QFileDialog::getOpenFileName(nullptr, DIR_SINGLE_CAPTION, DIR_PATH);
     ui->path_le->setText(fileName);
 
     QImage baseImg(fileName);
@@ -218,19 +218,11 @@ void MainWindow::on_actionSavePlot_triggered()
 
 void MainWindow::on_plot_btn_clicked()
 {
-    QString filePath_1 = "C:/Users/Dima/YandexDisk/EDUCATION/__UIR4/TestImages/F0000022.bmp";
-    QString filePath_2 = "C:/Users/Dima/YandexDisk/EDUCATION/__UIR4/TestImages/F0000051.bmp";
-    QImage img(filePath_2);
-    setOriginalImg(img);
-    showImg(img);
-    int thrBeg = 38;
-    int thrEnd = 61;
-
-    QImage sobel = _imgService.evklid(_imgService.applySobelMask(img, Qt::Vertical),
-                                      _imgService.applySobelMask(img, Qt::Horizontal));
+    QImage sobel = _imgService.evklid(_imgService.applySobelMask(_originalImg, Qt::Vertical),
+                                      _imgService.applySobelMask(_originalImg, Qt::Horizontal));
 
     QVector<double> thrValVector, sharpKVector_noFilter, sharpKVector_Filter;
-    for (int thr = thrBeg; thr <= thrEnd; ++thr)
+    for (int thr = ui->thr_min_sb->value(); thr <= ui->thr_max_sb->value(); ++thr)
     {
         thrValVector << static_cast<double>(thr);
         QImage thrImg = _imgService.threshold(sobel, thr);
@@ -250,16 +242,18 @@ void MainWindow::on_plot_btn_clicked()
         sharpKVector_Filter << _imgService.sharpnessK(sobel, thrImg);
     }
 
-    _plot->addGraph();
-    int gn = _plot->graphCount() - 1;
-    _plot->xAxis->setRange(static_cast<double>(thrBeg), static_cast<double>(thrEnd));
+    _plot->clearGraphs();
+    _plot->xAxis->setRange(thrValVector.first(), thrValVector.last());
     _plot->yAxis->setRange(*std::min_element(sharpKVector_noFilter.begin(), sharpKVector_noFilter.end()),
                            *std::max_element(sharpKVector_Filter.begin(), sharpKVector_Filter.end()));
+
+    _plot->addGraph();
+    int gn = _plot->graphCount() - 1;
     _plot->graph(gn)->setPen(QPen(Qt::red));
     _plot->graph(gn)->setLineStyle(QCPGraph::lsLine);
     _plot->graph(gn)->setScatterStyle( QCPScatterStyle(QCPScatterStyle::ssDisc, 4) );
     _plot->graph(gn)->setData(thrValVector, sharpKVector_noFilter);
-    _plot->graph(gn)->setName("Изображение группы 2. Фильтрации по площади не производилось.");
+    _plot->graph(gn)->setName("Фильтрации по площади не производилось.");
 
     _plot->addGraph();
     gn++;
@@ -267,7 +261,7 @@ void MainWindow::on_plot_btn_clicked()
     _plot->graph(gn)->setLineStyle(QCPGraph::lsLine);
     _plot->graph(gn)->setScatterStyle( QCPScatterStyle(QCPScatterStyle::ssDisc, 4) );
     _plot->graph(gn)->setData(thrValVector, sharpKVector_Filter);
-    _plot->graph(gn)->setName("Изображение группы 2. Фильтрация по площади.");
+    _plot->graph(gn)->setName("Фильтрация по площади.");
 
     _plot->legend->setVisible(true);
     _plot->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignLeft|Qt::AlignTop);
@@ -279,4 +273,47 @@ void MainWindow::on_plot_btn_clicked()
 void MainWindow::on_thr_min_H_sldr_sliderMoved(int position)
 {
     ui->thr_max_H_sldr->setMinimum(position+1);
+    if(ui->thr_max_sb->value() <= position)
+        ui->thr_max_sb->setValue(position + 1);
 }
+
+void MainWindow::on_actionOpenFolder_triggered()
+{
+    QString folderName = QFileDialog::getExistingDirectory(this,
+                                                           DIR_MULTIPLE_CAPTURE,
+                                                           DIR_PATH);
+    ui->folder_path_le->setText(folderName);
+}
+
+void MainWindow::on_calc_series_btn_clicked()
+{
+    QString folderPath = ui->folder_path_le->text();
+    int thr_lim = ui->threshold_sb->value();
+    int s_lim = ui->s_sldr->value();
+    QVector<double> imgIndexVector, sharpVector;
+
+    if(!folderPath.isEmpty())
+    {
+       QDir dirImg(folderPath);
+       QStringList imgNamesList = dirImg.entryList(QStringList() << "*.bmp" << ".BMP", QDir::Files);
+       ui->series_pb->setMaximum(imgNamesList.length());
+       for(QString name : imgNamesList)
+       {
+           QImage img(folderPath + QDir::separator() + name);
+           QImage grad = _imgService.evklid(_imgService.applySobelMask(img, Qt::Vertical),
+                                            _imgService.applySobelMask(img, Qt::Horizontal));
+           QImage thr = _imgService.threshold(grad, thr_lim);
+           QVector<Obj> objVector = _imgService.labeling(thr);
+           for (auto obj : objVector)
+           {
+               if(obj.s() <= s_lim)
+                   _imgService.fillPixel(&thr, obj, QColor(Qt::black));
+           }
+           sharpVector << _imgService.sharpnessK(grad, thr);
+           imgIndexVector << static_cast<double>(imgNamesList.indexOf(name));
+           ui->series_pb->setValue(imgNamesList.indexOf(name) + 1);
+           qDebug() << imgIndexVector.last() << "\t" << name << sharpVector.last();
+       }
+    }
+}
+

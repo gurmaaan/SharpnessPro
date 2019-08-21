@@ -66,6 +66,10 @@ private slots:
 
     void on_thr_min_H_sldr_sliderMoved(int position);
 
+    void on_actionOpenFolder_triggered();
+
+    void on_calc_series_btn_clicked();
+
 private:
     Ui::MainWindow *ui;
     QGraphicsScene *_scene;
