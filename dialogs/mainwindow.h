@@ -70,6 +70,10 @@ private slots:
 
     void on_calc_series_btn_clicked();
 
+    void on_series_pb_valueChanged(int value);
+
+    void on_group_series_btn_clicked();
+
 private:
     Ui::MainWindow *ui;
     QGraphicsScene *_scene;
@@ -82,6 +86,7 @@ private:
 
     QCustomPlot *_plot;
     QVector<Obj> _objVector;
+    QVector<double> _sharpKVector;
     //--func
     void connectAll();
     void setupWidgets();

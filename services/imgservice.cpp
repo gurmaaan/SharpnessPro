@@ -276,7 +276,6 @@ double ImgService::sharpnessK(QImage sobelImg, QImage thrImg)
             sum += qGray(sobelImg.pixel(p));
     }
     else {
-        //qDebug() << "Xui";
         return 0;
     }
     double k = static_cast<double>(sum) / static_cast<double>(whitePoints.count());

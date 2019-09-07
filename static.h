@@ -1,7 +1,7 @@
 #ifndef STATIC_H
     #define STATIC_H
     #ifdef __WIN32
-        #define DIR_PATH "C:/Users/Dima/YandexDisk/EDUCATION/PKMS/TestImages/Set1"
+        #define DIR_PATH "C:\\Users\\Dima\\Pictures\\TetsImgs"
     #elif __APPLE__
         #define DIR_PATH "/Users/dima/Yandex.Disk.localized/EDUCATION/__UIR4/TestImages"
     #endif
