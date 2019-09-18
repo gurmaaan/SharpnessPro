@@ -303,12 +303,16 @@ void MainWindow::on_calc_series_btn_clicked()
            QImage grad = _imgService.evklid(_imgService.applySobelMask(img, Qt::Vertical),
                                             _imgService.applySobelMask(img, Qt::Horizontal));
            QImage thr = _imgService.threshold(grad, thr_lim);
-//           QVector<Obj> objVector = _imgService.labeling(thr);
-//           for (auto obj : objVector)
-//           {
-//               if(obj.s() <= s_lim)
-//                   _imgService.fillPixel(&thr, obj, QColor(Qt::black));
-//           }
+           if(ui->s_gb->isChecked())
+           {
+               QVector<Obj> objVector = _imgService.labeling(thr);
+               qDebug() << objVector.length();
+               for (auto obj : objVector)
+               {
+                   if(obj.s() <= s_lim)
+                       _imgService.fillPixel(&thr, obj, QColor(Qt::black));
+               }
+           }
            sharpVector << _imgService.sharpnessK(grad, thr);
            qDebug() << name << sharpVector.last();
            imgIndexVector << static_cast<double>(imgNamesList.indexOf(name));
